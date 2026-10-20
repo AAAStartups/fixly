@@ -52,9 +52,11 @@ export default function App() {
   // FAQ Accordion State
   const [openFaq, setOpenFaq] = useState(0);
 
-  // Booking Modal State
+  // Booking Modal State (5-Step Mobile App Flow Replicated)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [modalStep, setModalStep] = useState(1); // 1 = Device, 2 = Address, 3 = Slot, 4 = Success
+  const [modalStep, setModalStep] = useState(1); // 1 = Brand, 2 = Model, 3 = Service, 4 = Time, 5 = Details, 6 = Success
+  const [modalBrandSearch, setModalBrandSearch] = useState('');
+  const [modalModelSearch, setModalModelSearch] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
@@ -114,7 +116,7 @@ export default function App() {
   const handleConfirmBooking = () => {
     const newId = `QF-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     setGeneratedOrderId(newId);
-    setModalStep(4);
+    setModalStep(6);
     triggerConfetti();
   };
 
@@ -122,6 +124,8 @@ export default function App() {
     if (brandId) setSelectedBrandId(brandId);
     if (modelId) setSelectedModelId(modelId);
     if (serviceId) setSelectedServiceId(serviceId);
+    setModalBrandSearch('');
+    setModalModelSearch('');
     setModalStep(1);
     setIsBookingModalOpen(true);
   };
@@ -930,80 +934,411 @@ export default function App() {
         </div>
       </footer>
 
-      {/* 12. INTERACTIVE DESKTOP BOOKING MODAL */}
+      {/* 10. INTERACTIVE 5-STEP DESKTOP BOOKING MODAL (REPLICATING MOBILE APP) */}
       {isBookingModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsBookingModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             {/* Modal Header */}
-            <div style={{ padding: '24px 28px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <span style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
-                  {modalStep === 4 ? 'BOOKING CONFIRMED' : `STEP ${modalStep} OF 3`}
-                </span>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#FFF', marginTop: '2px' }}>
-                  {modalStep === 1 && 'Confirm Your Device & Issue'}
-                  {modalStep === 2 && 'Pickup Address & Contact'}
-                  {modalStep === 3 && 'Choose Pickup Date & Time'}
-                  {modalStep === 4 && 'Repair Order Successfully Placed!'}
-                </h3>
+            <div style={{ padding: '24px 28px', borderBottom: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: modalStep < 6 ? '16px' : '0' }}>
+                <div>
+                  <span style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                    {modalStep === 6 ? 'BOOKING CONFIRMED' : `STEP ${modalStep} OF 5`}
+                  </span>
+                  <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#FFF', marginTop: '2px' }}>
+                    {modalStep === 1 && 'Select Smartphone Brand'}
+                    {modalStep === 2 && `Select ${currentBrand.name} Model`}
+                    {modalStep === 3 && 'Select Repair Service'}
+                    {modalStep === 4 && 'Choose Pickup Date & Time'}
+                    {modalStep === 5 && 'Booking Details & Address'}
+                    {modalStep === 6 && 'Pickup Successfully Scheduled!'}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setIsBookingModalOpen(false)}
+                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+                >
+                  <X size={22} />
+                </button>
               </div>
-              <button
-                onClick={() => setIsBookingModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-              >
-                <X size={22} />
-              </button>
+
+              {/* 5-Step Stepper Header */}
+              {modalStep < 6 && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+                  {['Brand', 'Model', 'Service', 'Time', 'Details'].map((stepLabel, idx) => {
+                    const sNum = idx + 1;
+                    const isCompleted = modalStep > sNum;
+                    const isCurrent = modalStep === sNum;
+                    return (
+                      <div key={sNum}>
+                        <div
+                          style={{
+                            height: '4px',
+                            borderRadius: '2px',
+                            backgroundColor: isCompleted || isCurrent ? 'var(--primary-red)' : 'var(--border-subtle)',
+                            marginBottom: '6px',
+                            transition: 'all 0.25s'
+                          }}
+                        />
+                        <div
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: isCurrent ? 800 : 600,
+                            color: isCurrent ? '#FFF' : isCompleted ? 'var(--text-muted)' : 'var(--text-dim)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.4px',
+                            textAlign: 'center'
+                          }}
+                        >
+                          {sNum}. {stepLabel}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Modal Body */}
             <div style={{ padding: '28px' }}>
-              {/* Step 1: Device Confirmation */}
+              {/* STEP 1: SELECT BRAND (1/5) */}
               {modalStep === 1 && (
                 <div>
-                  <div style={{ backgroundColor: 'var(--bg-canvas)', borderRadius: '16px', padding: '18px', border: '1px solid var(--border-subtle)', marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Device Selected</span>
-                      <span style={{ color: '#FFF', fontWeight: 700, fontSize: '15px' }}>{currentModel.name}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Repair Issue</span>
-                      <span style={{ color: 'var(--primary-red)', fontWeight: 700, fontSize: '14px' }}>{currentService.title}</span>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '10px' }}>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Estimated Total (Part + ₹79 Pickup)</span>
-                      <span style={{ color: '#FFF', fontWeight: 900, fontSize: '18px' }}>₹{totalPrice.toLocaleString()}</span>
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '16px' }}>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>
-                      Brief description of device fault (optional)
-                    </label>
-                    <textarea
-                      placeholder="e.g. Glass cracked after fall, touch working partially on top"
-                      rows={3}
+                  <div style={{ position: 'relative', marginBottom: '20px' }}>
+                    <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '14px', top: '15px' }} />
+                    <input
+                      type="text"
+                      placeholder="Search smartphone brand (e.g. Apple, Samsung, Xiaomi)..."
+                      value={modalBrandSearch}
+                      onChange={(e) => setModalBrandSearch(e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '12px',
+                        height: '46px',
+                        padding: '0 16px 0 40px',
                         backgroundColor: 'var(--bg-canvas)',
                         border: '1px solid var(--border-subtle)',
                         borderRadius: '12px',
                         color: '#FFF',
-                        fontSize: '13px',
-                        outline: 'none',
-                        resize: 'none'
+                        fontSize: '14px',
+                        outline: 'none'
                       }}
                     />
                   </div>
 
-                  <button onClick={() => setModalStep(2)} className="btn-primary" style={{ width: '100%', height: '50px' }}>
-                    Continue to Pickup Address <ArrowRight size={16} />
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', maxHeight: '380px', overflowY: 'auto', paddingRight: '4px', marginBottom: '24px' }}>
+                    {BRANDS.filter((b) => b.name.toLowerCase().includes(modalBrandSearch.toLowerCase())).map((b) => {
+                      const isSelected = selectedBrandId === b.id;
+                      return (
+                        <div
+                          key={b.id}
+                          onClick={() => {
+                            setSelectedBrandId(b.id);
+                            const models = MODELS_BY_BRAND[b.id] || [];
+                            if (models[0]) setSelectedModelId(models[0].id);
+                            setModalModelSearch('');
+                          }}
+                          style={{
+                            padding: '16px',
+                            borderRadius: '14px',
+                            backgroundColor: isSelected ? 'rgba(255,43,66,0.08)' : 'var(--bg-canvas)',
+                            border: `1.5px solid ${isSelected ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#1E1E22', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '13px' }}>
+                              {b.logo}
+                            </div>
+                            <div>
+                              <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700 }}>{b.name}</div>
+                              <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{b.modelsCount}+ Models Supported</div>
+                            </div>
+                          </div>
+                          <div style={{ width: '18px', height: '18px', borderRadius: '50%', border: `1.5px solid ${isSelected ? 'var(--primary-red)' : 'var(--border-subtle)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            {isSelected && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--primary-red)' }} />}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    onClick={() => setModalStep(2)}
+                    className="btn-primary"
+                    style={{ width: '100%', height: '50px', fontSize: '15px' }}
+                  >
+                    Next: Select {currentBrand.name} Model <ArrowRight size={16} />
                   </button>
                 </div>
               )}
 
-              {/* Step 2: Address & Contact */}
+              {/* STEP 2: SELECT MODEL (2/5) */}
               {modalStep === 2 && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Selected Brand:</span>
+                      <span style={{ backgroundColor: '#1E1E22', padding: '3px 10px', borderRadius: '6px', color: '#FFF', fontSize: '12px', fontWeight: 700 }}>
+                        {currentBrand.name}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setModalStep(1)}
+                      style={{ background: 'none', border: 'none', color: 'var(--primary-red)', cursor: 'pointer', fontSize: '12px', fontWeight: 700 }}
+                    >
+                      ← Change Brand
+                    </button>
+                  </div>
+
+                  <div style={{ position: 'relative', marginBottom: '16px' }}>
+                    <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '14px', top: '15px' }} />
+                    <input
+                      type="text"
+                      placeholder={`Search ${currentBrand.name} model (e.g. 11T, Pro, Plus)...`}
+                      value={modalModelSearch}
+                      onChange={(e) => setModalModelSearch(e.target.value)}
+                      style={{
+                        width: '100%',
+                        height: '46px',
+                        padding: '0 16px 0 40px',
+                        backgroundColor: 'var(--bg-canvas)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '12px',
+                        color: '#FFF',
+                        fontSize: '14px',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '340px', overflowY: 'auto', paddingRight: '4px', marginBottom: '24px' }}>
+                    {availableModels
+                      .filter((m) => m.name.toLowerCase().includes(modalModelSearch.toLowerCase()))
+                      .map((m) => {
+                        const isSelected = selectedModelId === m.id;
+                        return (
+                          <div
+                            key={m.id}
+                            onClick={() => setSelectedModelId(m.id)}
+                            style={{
+                              padding: '14px 18px',
+                              borderRadius: '12px',
+                              backgroundColor: isSelected ? 'rgba(255,43,66,0.08)' : 'var(--bg-canvas)',
+                              border: `1.5px solid ${isSelected ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            <div>
+                              <div style={{ color: '#FFF', fontSize: '14px', fontWeight: 700 }}>{m.name}</div>
+                              <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Year: {m.year} · OEM Certified Parts Available</div>
+                            </div>
+                            <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '14px' }}>
+                              <div>
+                                <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>SCREEN FROM</span>
+                                <div style={{ color: '#FFF', fontSize: '14px', fontWeight: 800 }}>₹{m.screenPrice.toLocaleString()}</div>
+                              </div>
+                              <div style={{ width: '18px', height: '18px', borderRadius: '50%', border: `1.5px solid ${isSelected ? 'var(--primary-red)' : 'var(--border-subtle)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {isSelected && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--primary-red)' }} />}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button onClick={() => setModalStep(1)} className="btn-secondary" style={{ flex: 1 }}>
+                      Back
+                    </button>
+                    <button onClick={() => setModalStep(3)} className="btn-primary" style={{ flex: 2 }}>
+                      Next: Select Service <ArrowRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: SELECT SERVICE (3/5) */}
+              {modalStep === 3 && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Device Selected:</span>
+                      <span style={{ backgroundColor: '#1E1E22', padding: '3px 10px', borderRadius: '6px', color: '#FFF', fontSize: '12px', fontWeight: 700 }}>
+                        {currentModel.name}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setModalStep(2)}
+                      style={{ background: 'none', border: 'none', color: 'var(--primary-red)', cursor: 'pointer', fontSize: '12px', fontWeight: 700 }}
+                    >
+                      ← Change Model
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', maxHeight: '360px', overflowY: 'auto', paddingRight: '4px', marginBottom: '24px' }}>
+                    {SERVICES.map((s) => {
+                      const isSelected = selectedServiceId === s.id;
+                      const price =
+                        s.id === 'battery'
+                          ? currentModel?.batteryPrice || 1999
+                          : s.id === 'charging'
+                          ? 799
+                          : s.id === 'backglass'
+                          ? 1299
+                          : s.id === 'camera'
+                          ? 1499
+                          : s.id === 'water'
+                          ? 1999
+                          : currentModel?.screenPrice || 4299;
+
+                      return (
+                        <div
+                          key={s.id}
+                          onClick={() => setSelectedServiceId(s.id)}
+                          style={{
+                            padding: '16px',
+                            borderRadius: '14px',
+                            backgroundColor: isSelected ? 'rgba(255,43,66,0.08)' : 'var(--bg-canvas)',
+                            border: `1.5px solid ${isSelected ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                            <div style={{ color: '#FFF', fontSize: '14px', fontWeight: 700 }}>{s.title}</div>
+                            <div style={{ width: '18px', height: '18px', borderRadius: '50%', border: `1.5px solid ${isSelected ? 'var(--primary-red)' : 'var(--border-subtle)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: '8px' }}>
+                              {isSelected && <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--primary-red)' }} />}
+                            </div>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '18px', fontWeight: 900, color: '#FFF', marginBottom: '4px' }}>
+                              ₹{price.toLocaleString()}
+                            </div>
+                            <div style={{ display: 'flex', gap: '6px', fontSize: '11px' }}>
+                              <span style={{ color: 'var(--text-muted)' }}>🛡 {s.warranty}</span>
+                              <span style={{ color: '#444' }}>•</span>
+                              <span style={{ color: 'var(--text-muted)' }}>⚡ {s.turnaround}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button onClick={() => setModalStep(2)} className="btn-secondary" style={{ flex: 1 }}>
+                      Back
+                    </button>
+                    <button onClick={() => setModalStep(4)} className="btn-primary" style={{ flex: 2 }}>
+                      Next: Choose Pickup Slot <ArrowRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: CHOOSE PICKUP TIME (4/5) */}
+              {modalStep === 4 && (
+                <div>
+                  <div style={{ backgroundColor: 'var(--bg-canvas)', borderRadius: '12px', padding: '14px 18px', border: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <div>
+                      <div style={{ color: '#FFF', fontSize: '14px', fontWeight: 700 }}>{currentModel.name}</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: '12px' }}>{currentService.title}</div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>ESTIMATED PART</span>
+                      <div style={{ color: '#FFF', fontSize: '16px', fontWeight: 800 }}>₹{estimatedPartPrice.toLocaleString()}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '18px' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#FFF', marginBottom: '8px' }}>
+                      Choose Pickup Date
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                      {['Today (Express)', 'Tomorrow, 21 Oct', 'Wed, 22 Oct', 'Thu, 23 Oct'].map((d) => (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => setSelectedPickupDate(d)}
+                          style={{
+                            padding: '12px 6px',
+                            borderRadius: '10px',
+                            backgroundColor: selectedPickupDate === d ? 'var(--primary-red)' : 'var(--bg-canvas)',
+                            color: selectedPickupDate === d ? '#FFF' : 'var(--text-muted)',
+                            border: `1px solid ${selectedPickupDate === d ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            textAlign: 'center'
+                          }}
+                        >
+                          {d}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginBottom: '24px' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#FFF', marginBottom: '8px' }}>
+                      Choose Pickup Time Window
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                      {[
+                        '10:00 AM - 11:30 AM',
+                        '1:00 PM - 2:30 PM',
+                        '4:00 PM - 5:30 PM',
+                        '6:30 PM - 8:00 PM'
+                      ].map((slot) => (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setSelectedPickupSlot(slot)}
+                          style={{
+                            padding: '12px',
+                            borderRadius: '10px',
+                            backgroundColor: selectedPickupSlot === slot ? 'rgba(255,43,66,0.12)' : 'var(--bg-canvas)',
+                            color: selectedPickupSlot === slot ? '#FFF' : 'var(--text-muted)',
+                            border: `1.5px solid ${selectedPickupSlot === slot ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {slot}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div style={{ backgroundColor: '#18181B', padding: '12px 16px', borderRadius: '10px', border: '1px solid #27272A', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Truck size={18} color="var(--primary-red)" />
+                    <span>Flat ₹79 doorstep logistics. Verified technician brings tamper-proof sealed intake bag.</span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button onClick={() => setModalStep(3)} className="btn-secondary" style={{ flex: 1 }}>
+                      Back
+                    </button>
+                    <button onClick={() => setModalStep(5)} className="btn-primary" style={{ flex: 2 }}>
+                      Next: Booking Details <ArrowRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 5: BOOKING DETAILS & ADDRESS (5/5) */}
+              {modalStep === 5 && (
                 <div>
                   <div style={{ marginBottom: '14px' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>
@@ -1030,7 +1365,7 @@ export default function App() {
 
                   <div style={{ marginBottom: '14px' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>
-                      Mobile Number (For Rider & OTP) *
+                      Mobile Number (For Rider Updates & OTP) *
                     </label>
                     <input
                       type="tel"
@@ -1051,7 +1386,7 @@ export default function App() {
                     />
                   </div>
 
-                  <div style={{ marginBottom: '20px' }}>
+                  <div style={{ marginBottom: '18px' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '6px' }}>
                       Doorstep Pickup Address *
                     </label>
@@ -1074,92 +1409,33 @@ export default function App() {
                     />
                   </div>
 
-                  <div style={{ display: 'flex', gap: '12px' }}>
-                    <button onClick={() => setModalStep(1)} className="btn-secondary" style={{ flex: 1 }}>
-                      Back
-                    </button>
-                    <button onClick={() => setModalStep(3)} className="btn-primary" style={{ flex: 2 }}>
-                      Select Pickup Slot <ArrowRight size={16} />
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3: Slot Selection & Confirmation */}
-              {modalStep === 3 && (
-                <div>
-                  <div style={{ marginBottom: '18px' }}>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '8px' }}>
-                      Choose Pickup Date
-                    </label>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                      {['Today (Express)', 'Tomorrow, 21 Oct', 'Thu, 22 Oct'].map((d) => (
-                        <button
-                          key={d}
-                          type="button"
-                          onClick={() => setSelectedPickupDate(d)}
-                          style={{
-                            padding: '10px',
-                            borderRadius: '10px',
-                            backgroundColor: selectedPickupDate === d ? 'var(--primary-red)' : 'var(--bg-canvas)',
-                            color: selectedPickupDate === d ? '#FFF' : 'var(--text-muted)',
-                            border: `1px solid ${selectedPickupDate === d ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
-                            fontSize: '12px',
-                            fontWeight: 700,
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {d}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '22px' }}>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '8px' }}>
-                      Choose Pickup Time Window
-                    </label>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                      {[
-                        '10:00 AM - 11:30 AM',
-                        '1:00 PM - 2:30 PM',
-                        '4:00 PM - 5:30 PM',
-                        '6:30 PM - 8:00 PM'
-                      ].map((slot) => (
-                        <button
-                          key={slot}
-                          type="button"
-                          onClick={() => setSelectedPickupSlot(slot)}
-                          style={{
-                            padding: '10px',
-                            borderRadius: '10px',
-                            backgroundColor: selectedPickupSlot === slot ? 'rgba(255,43,66,0.18)' : 'var(--bg-canvas)',
-                            color: selectedPickupSlot === slot ? '#FFF' : 'var(--text-muted)',
-                            border: `1.5px solid ${selectedPickupSlot === slot ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {slot}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Summary Box */}
-                  <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '4px' }}>
-                      <span style={{ color: 'var(--text-muted)' }}>Estimated Amount Payable:</span>
-                      <span style={{ color: '#FFF', fontWeight: 800 }}>₹{totalPrice.toLocaleString()}</span>
+                  <div style={{ backgroundColor: 'var(--bg-canvas)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', marginBottom: '22px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                      <span>{currentModel.name} · {currentService.title}</span>
+                      <span style={{ color: '#FFF', fontWeight: 600 }}>₹{estimatedPartPrice.toLocaleString()}</span>
                     </div>
-                    <div style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 700 }}>
-                      ✔ No upfront payment · Pay after repair is done & tested
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>
+                      <span>Central Lab Diagnostics</span>
+                      <span style={{ color: '#25D366', fontWeight: 700 }}>FREE (₹0)</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '10px' }}>
+                      <span>Doorstep Pickup & Safe Drop</span>
+                      <span style={{ color: '#FFF', fontWeight: 600 }}>₹{logisticsFee}</span>
+                    </div>
+                    <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <div style={{ color: '#FFF', fontWeight: 900, fontSize: '18px' }}>Total: ₹{totalPrice.toLocaleString()}</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Slot: {selectedPickupDate}, {selectedPickupSlot}</div>
+                      </div>
+                      <div style={{ color: '#D4D4D8', fontSize: '11px', fontWeight: 700 }}>
+                        ✔ Pay After Delivery & Testing
+                      </div>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', gap: '12px' }}>
-                    <button onClick={() => setModalStep(2)} className="btn-secondary" style={{ flex: 1 }}>
+                    <button onClick={() => setModalStep(4)} className="btn-secondary" style={{ flex: 1 }}>
                       Back
                     </button>
                     <button onClick={handleConfirmBooking} className="btn-primary" style={{ flex: 2 }}>
@@ -1169,10 +1445,10 @@ export default function App() {
                 </div>
               )}
 
-              {/* Step 4: Booking Success Screen */}
-              {modalStep === 4 && (
+              {/* STEP 6: BOOKING CONFIRMED (SUCCESS SCREEN) */}
+              {modalStep === 6 && (
                 <div style={{ textAlign: 'center', padding: '10px 0' }}>
-                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--primary-red-faint)', color: 'var(--primary-red)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
+                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'rgba(255,43,66,0.1)', color: 'var(--primary-red)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
                     <CheckCircle2 size={36} />
                   </div>
                   <h4 style={{ fontSize: '22px', fontWeight: 800, color: '#FFF', marginBottom: '6px' }}>

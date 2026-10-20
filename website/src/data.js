@@ -43,6 +43,29 @@ export const MODELS_BY_BRAND = {
   google: [
     { id: 'pixel-8-pro', name: 'Google Pixel 8 Pro', year: '2023', screenPrice: 9499, batteryPrice: 2799 },
     { id: 'pixel-7a', name: 'Google Pixel 7a', year: '2023', screenPrice: 5199, batteryPrice: 2099 }
+  ],
+  vivo: [
+    { id: 'vivo-x100-pro', name: 'Vivo X100 Pro 5G', year: '2024', screenPrice: 8999, batteryPrice: 2699 },
+    { id: 'vivo-v30-pro', name: 'Vivo V30 Pro 5G', year: '2024', screenPrice: 5499, batteryPrice: 2199 },
+    { id: 'vivo-t2-pro', name: 'Vivo T2 Pro 5G', year: '2023', screenPrice: 3799, batteryPrice: 1799 }
+  ],
+  oppo: [
+    { id: 'oppo-reno-11-pro', name: 'Oppo Reno 11 Pro 5G', year: '2024', screenPrice: 6499, batteryPrice: 2399 },
+    { id: 'oppo-f25-pro', name: 'Oppo F25 Pro 5G', year: '2024', screenPrice: 4299, batteryPrice: 1899 }
+  ],
+  realme: [
+    { id: 'realme-12-pro-plus', name: 'Realme 12 Pro+ 5G', year: '2024', screenPrice: 4999, batteryPrice: 1999 },
+    { id: 'realme-gt-neo-3', name: 'Realme GT Neo 3', year: '2022', screenPrice: 4499, batteryPrice: 1899 },
+    { id: 'realme-11-pro', name: 'Realme 11 Pro 5G', year: '2023', screenPrice: 3899, batteryPrice: 1799 }
+  ],
+  motorola: [
+    { id: 'moto-edge-50-pro', name: 'Motorola Edge 50 Pro', year: '2024', screenPrice: 5999, batteryPrice: 2299 },
+    { id: 'moto-g84', name: 'Motorola G84 5G', year: '2023', screenPrice: 3299, batteryPrice: 1699 }
+  ],
+  iqoo: [
+    { id: 'iqoo-12', name: 'iQOO 12 5G', year: '2023', screenPrice: 8999, batteryPrice: 2799 },
+    { id: 'iqoo-neo-9-pro', name: 'iQOO Neo 9 Pro', year: '2024', screenPrice: 5499, batteryPrice: 2199 },
+    { id: 'iqoo-z9', name: 'iQOO Z9 5G', year: '2024', screenPrice: 3299, batteryPrice: 1699 }
   ]
 };
 
