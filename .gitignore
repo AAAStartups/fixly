@@ -1,7 +1,9 @@
 # Node / Web
-web/node_modules/
-web/dist/
+node_modules/
+dist/
+.vercel/
 web/.oxlintcache
+website/dist/
 
 # Flutter / Dart
 flutter_app/.dart_tool/
