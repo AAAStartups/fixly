@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
+import '../services/api_service.dart';
 
-class LiveTrackingScreen extends StatelessWidget {
+class LiveTrackingScreen extends StatefulWidget {
   final BookingState bookingState;
   final VoidCallback onReturnHome;
 
@@ -14,7 +15,77 @@ class LiveTrackingScreen extends StatelessWidget {
   });
 
   @override
+  State<LiveTrackingScreen> createState() => _LiveTrackingScreenState();
+}
+
+class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
+  RepairOrderModel? _activeOrder;
+  bool _isLoading = true;
+  bool _isActionInProgress = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadActiveOrder();
+  }
+
+  Future<void> _loadActiveOrder() async {
+    final order = await ApiService().fetchActiveOrder();
+    if (mounted) {
+      setState(() {
+        _activeOrder = order;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _handleEstimateResponse(bool isApproved) async {
+    final orderId = _activeOrder?.id ?? widget.bookingState.orderId;
+    if (orderId == null) return;
+
+    setState(() => _isActionInProgress = true);
+    await ApiService().respondToEstimate(orderId, isApproved);
+    await _loadActiveOrder();
+    if (mounted) {
+      setState(() => _isActionInProgress = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(isApproved ? 'Quotation Approved! Repair in progress.' : 'Quotation declined.'),
+          backgroundColor: isApproved ? AppColors.primaryRed : Colors.grey[800],
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleWarrantyClaim() async {
+    final orderId = _activeOrder?.id ?? widget.bookingState.orderId;
+    if (orderId == null) return;
+
+    setState(() => _isActionInProgress = true);
+    final success = await ApiService().claimWarranty(
+      orderId,
+      'Customer reported display touch irregularity under 30-Day FIXLY Assured Guarantee.',
+    );
+    if (mounted) {
+      setState(() => _isActionInProgress = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? '30-Day Warranty claim logged. Free technician inspection dispatched.' : 'Failed to claim warranty.'),
+          backgroundColor: AppColors.primaryRed,
+        ),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final orderNum = _activeOrder?.orderNumber ??
+        widget.bookingState.orderNumber ??
+        'QF-2026-00101';
+
+    final currentStatus = _activeOrder?.status ?? 'REPAIR_IN_PROGRESS';
+    final estimate = _activeOrder?.estimate;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -27,7 +98,7 @@ class LiveTrackingScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: onReturnHome,
+                    onTap: widget.onReturnHome,
                     borderRadius: BorderRadius.circular(24),
                     child: Container(
                       width: 44,
@@ -39,9 +110,9 @@ class LiveTrackingScreen extends StatelessWidget {
                       child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                     ),
                   ),
-                  const Text(
-                    'Order #QF-2026-89421',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                  Text(
+                    'Order #$orderNum',
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -79,20 +150,20 @@ class LiveTrackingScreen extends StatelessWidget {
                               color: AppColors.primaryRed,
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            child: const Icon(Icons.local_shipping_rounded, color: Colors.white, size: 26),
+                            child: const Icon(Icons.build_circle_rounded, color: Colors.white, size: 26),
                           ),
                           const SizedBox(width: 14),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Pickup Scheduled',
-                                  style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
+                                Text(
+                                  _formatStatus(currentStatus),
+                                  style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Rider will arrive at ${bookingState.selectedTimeSlot ?? '10:00 AM'}, ${bookingState.selectedDate ?? '19 Oct'}',
+                                  'Doorstep Logistics & Lab Workshop',
                                   style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
                                 ),
                               ],
@@ -102,7 +173,141 @@ class LiveTrackingScreen extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
+
+                    // Estimate Review Card if available
+                    if (estimate != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Technician Itemized Estimate',
+                                  style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                                ),
+                                Text(
+                                  'Transparent Pricing',
+                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                                ),
+                              ],
+                            ),
+                            const Divider(color: AppColors.border, height: 16),
+                            ...estimate.items.map((it) => Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(it.title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                                      Text('₹${it.amount.toInt()}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                                    ],
+                                  ),
+                                )),
+                            const Divider(color: AppColors.border, height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('Total Quotation', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800)),
+                                Text('₹${estimate.totalAmount.toInt()}', style: const TextStyle(color: AppColors.primaryRed, fontSize: 17, fontWeight: FontWeight.w900)),
+                              ],
+                            ),
+                            if (estimate.isApproved == null || estimate.isApproved == false) ...[
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: _isActionInProgress ? null : () => _handleEstimateResponse(false),
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        side: const BorderSide(color: AppColors.border),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                      ),
+                                      child: const Text('Decline'),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: _isActionInProgress ? null : () => _handleEstimateResponse(true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primaryRed,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                      ),
+                                      child: const Text('Approve Quote'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ] else ...[
+                              const SizedBox(height: 6),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryRed.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  '✔ Quotation Approved by You',
+                                  style: TextStyle(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+
+                    // 30-Day Warranty Assurance Card
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppColors.surfaceElevated,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(Icons.shield_rounded, color: AppColors.primaryRed, size: 22),
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('30-Day FIXLY Warranty', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                                SizedBox(height: 2),
+                                Text('Covers parts & workmanship with free revisit', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                              ],
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: _isActionInProgress ? null : _handleWarrantyClaim,
+                            child: const Text('Claim ›', style: TextStyle(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700)),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
 
                     const Text(
                       'Repair Journey Timeline',
@@ -114,47 +319,51 @@ class LiveTrackingScreen extends StatelessWidget {
                     _buildTimelineStep(
                       stepNum: '1',
                       title: 'Pickup Scheduled',
-                      time: '10:00 AM, 19 Oct',
-                      desc: 'Assigned rider: Rajesh K. (Verified Partner)',
+                      time: '${widget.bookingState.selectedTimeSlot ?? "10:00 AM"}, ${widget.bookingState.selectedDate ?? "Today"}',
+                      desc: 'Assigned rider: Amit Verma (Verified Partner)',
                       isCompleted: true,
-                      isCurrent: true,
+                      isCurrent: currentStatus == 'PICKUP_SCHEDULED',
                     ),
                     _buildTimelineStep(
                       stepNum: '2',
                       title: 'Device Received at Workshop',
-                      time: 'Expected ~11:30 AM',
-                      desc: 'Check-in & physical condition scan',
-                      isCompleted: false,
+                      time: 'Check-in Completed',
+                      desc: 'Intake checklist & initial diagnostic check',
+                      isCompleted: _isStageDone(currentStatus, 2),
+                      isCurrent: currentStatus == 'DEVICE_RECEIVED',
                     ),
                     _buildTimelineStep(
                       stepNum: '3',
                       title: 'Free Workshop Diagnosis Completed',
-                      time: 'Expected ~12:15 PM',
-                      desc: 'Itemized quotation sent to your app',
-                      isCompleted: false,
+                      time: 'Quotation Dispatched',
+                      desc: 'Technician inspection & itemized quotation',
+                      isCompleted: _isStageDone(currentStatus, 3),
+                      isCurrent: currentStatus == 'DIAGNOSIS_PENDING' || currentStatus == 'ESTIMATE_SENT',
                     ),
                     _buildTimelineStep(
                       stepNum: '4',
                       title: 'Repair in Progress',
-                      time: 'Expected ~1:00 PM',
-                      desc: 'Watch repair live on the Live stream tab',
-                      isCompleted: false,
+                      time: 'Underway on Workbench',
+                      desc: 'Genuine parts replacement and micro-soldering',
+                      isCompleted: _isStageDone(currentStatus, 4),
+                      isCurrent: currentStatus == 'REPAIR_IN_PROGRESS',
                     ),
                     _buildTimelineStep(
                       stepNum: '5',
                       title: 'Quality Check & Safe Delivery',
-                      time: 'Expected ~2:30 PM',
-                      desc: '30-day warranty card & digital invoice issued',
-                      isCompleted: false,
+                      time: 'Estimated Turnaround Today',
+                      desc: '18-point testing & doorstep return delivery',
+                      isCompleted: _isStageDone(currentStatus, 5),
+                      isCurrent: currentStatus == 'OUT_FOR_DELIVERY' || currentStatus == 'DELIVERED',
                       isLast: true,
                     ),
 
                     const SizedBox(height: 20),
 
-                    // Back to Home
+                    // Back to Home CTA
                     FixlyCrimsonButton(
                       label: 'Back to Home',
-                      onTap: onReturnHome,
+                      onTap: widget.onReturnHome,
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -165,6 +374,42 @@ class LiveTrackingScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatStatus(String status) {
+    switch (status) {
+      case 'PICKUP_SCHEDULED':
+        return 'Pickup Scheduled';
+      case 'DEVICE_RECEIVED':
+        return 'Device Received at Lab';
+      case 'DIAGNOSIS_PENDING':
+        return 'Diagnosis Completed';
+      case 'ESTIMATE_SENT':
+        return 'Quotation Awaiting Approval';
+      case 'ESTIMATE_APPROVED':
+      case 'REPAIR_IN_PROGRESS':
+        return 'Repair In Progress';
+      case 'QUALITY_CHECK_PASSED':
+        return 'Quality Check Passed';
+      case 'OUT_FOR_DELIVERY':
+        return 'Out for Delivery';
+      case 'DELIVERED':
+        return 'Delivered & Complete';
+      default:
+        return 'Active Repair';
+    }
+  }
+
+  bool _isStageDone(String status, int stage) {
+    final stages = [
+      'PICKUP_SCHEDULED',
+      'DEVICE_RECEIVED',
+      'DIAGNOSIS_PENDING',
+      'REPAIR_IN_PROGRESS',
+      'DELIVERED',
+    ];
+    final currentIndex = stages.indexOf(status);
+    return currentIndex >= stage - 1;
   }
 
   Widget _buildTimelineStep({

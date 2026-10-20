@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
+import '../services/api_service.dart';
 
 class BookingDetailsScreen extends StatelessWidget {
   final BookingState bookingState;
@@ -233,7 +234,10 @@ class BookingDetailsScreen extends StatelessWidget {
                     // Confirm Booking CTA
                     FixlyCrimsonButton(
                       label: 'Confirm Booking',
-                      onTap: onConfirmBooking,
+                      onTap: () {
+                        ApiService().createBooking(bookingState);
+                        onConfirmBooking();
+                      },
                     ),
 
                     const SizedBox(height: 24),

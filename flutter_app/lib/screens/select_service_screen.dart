@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
+import '../services/api_service.dart';
 
 class SelectServiceScreen extends StatefulWidget {
   final BookingState bookingState;
@@ -24,7 +25,7 @@ class SelectServiceScreen extends StatefulWidget {
 }
 
 class _SelectServiceScreenState extends State<SelectServiceScreen> {
-  final List<RepairService> _services = const [
+  List<RepairService> _services = const [
     RepairService(
       id: 'display',
       title: 'Display',
@@ -68,6 +69,21 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> {
       warrantyText: '6 months warranty',
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadServices();
+  }
+
+  Future<void> _loadServices() async {
+    final services = await ApiService().fetchServices();
+    if (mounted && services.isNotEmpty) {
+      setState(() {
+        _services = services;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

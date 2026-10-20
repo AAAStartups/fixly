@@ -20,3 +20,14 @@ flutter_app/.pub/
 *.iws
 *.ipr
 .vscode/
+
+# Executables & Binaries
+*.exe
+SideloadlySetup64.exe
+ios_artifact/
+
+# Backend
+backend/node_modules/
+backend/dist/
+backend/.env
+

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
+import '../services/api_service.dart';
 
 class SelectBrandScreen extends StatefulWidget {
   final BookingState bookingState;
@@ -24,21 +25,24 @@ class SelectBrandScreen extends StatefulWidget {
 class _SelectBrandScreenState extends State<SelectBrandScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  List<DeviceBrand> _brands = [];
+  bool _isLoading = true;
 
-  final List<DeviceBrand> _brands = const [
-    DeviceBrand(id: 'apple', name: 'Apple', logoText: ''),
-    DeviceBrand(id: 'samsung', name: 'Samsung', logoText: 'SAMSUNG'),
-    DeviceBrand(id: 'oneplus', name: 'OnePlus', logoText: '1+'),
-    DeviceBrand(id: 'google', name: 'Google', logoText: 'G'),
-    DeviceBrand(id: 'xiaomi', name: 'Xiaomi', logoText: 'mi'),
-    DeviceBrand(id: 'vivo', name: 'Vivo', logoText: 'vivo'),
-    DeviceBrand(id: 'motorola', name: 'Motorola', logoText: 'M'),
-    DeviceBrand(id: 'realme', name: 'Realme', logoText: 'realme'),
-    DeviceBrand(id: 'oppo', name: 'OPPO', logoText: 'oppo'),
-    DeviceBrand(id: 'poco', name: 'POCO', logoText: 'POCO'),
-    DeviceBrand(id: 'iqoo', name: 'iQOO', logoText: 'iQOO'),
-    DeviceBrand(id: 'huawei', name: 'Huawei', logoText: 'HUAWEI'),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadBrands();
+  }
+
+  Future<void> _loadBrands() async {
+    final brands = await ApiService().fetchBrands();
+    if (mounted) {
+      setState(() {
+        _brands = brands;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +50,8 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
         .where((b) => b.name.toLowerCase().contains(_searchQuery.toLowerCase()))
         .toList();
 
-    final selectedBrand = widget.bookingState.selectedBrand ?? _brands[4]; // default Xiaomi
+    final selectedBrand = widget.bookingState.selectedBrand ??
+        (_brands.isNotEmpty ? _brands.firstWhere((b) => b.id == 'xiaomi', orElse: () => _brands.first) : null);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -82,8 +87,8 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
                         onChanged: (val) => setState(() => _searchQuery = val),
                         style: const TextStyle(color: Colors.white, fontSize: 14),
                         decoration: const InputDecoration(
-                          hintText: 'Search for model (eg. iPhone 14)',
-                          hintStyle: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                          hintText: 'Search for brand or model (eg. iPhone 14)',
+                          hintStyle: TextStyle(color: AppColors.textSecondary, fontSize: 13),
                           border: InputBorder.none,
                           isDense: true,
                         ),
@@ -94,70 +99,67 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
               ),
             ),
 
-            // 3x4 Brand Grid
+            // Brand Grid
             Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                gridDelegate: const RadialGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 1.15,
-                ),
-                itemCount: filteredBrands.length,
-                itemBuilder: (context, index) {
-                  final brand = filteredBrands[index];
-                  final isSelected = selectedBrand.id == brand.id;
-
-                  return InkWell(
-                    onTap: () {
-                      widget.onBrandSelected(brand);
-                    },
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isSelected ? AppColors.primaryRed : AppColors.border,
-                          width: isSelected ? 2 : 1,
-                        ),
-                        boxShadow: isSelected
-                            ? [
-                                BoxShadow(
-                                  color: AppColors.primaryRed.withOpacity(0.15),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
+              child: _isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(color: AppColors.primaryRed),
+                    )
+                  : GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 1.05,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildBrandLogo(brand),
-                          const SizedBox(height: 8),
-                          Text(
-                            brand.name,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                      itemCount: filteredBrands.length,
+                      itemBuilder: (context, index) {
+                        final brand = filteredBrands[index];
+                        final isSelected = selectedBrand?.id == brand.id;
+
+                        return InkWell(
+                          onTap: () {
+                            widget.onBrandSelected(brand);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.primaryRed.withOpacity(0.08)
+                                  : AppColors.surface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isSelected ? AppColors.primaryRed : AppColors.border,
+                                width: isSelected ? 2 : 1,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildBrandLogo(brand),
+                                const SizedBox(height: 8),
+                                Text(
+                                  brand.name,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
 
-            // Sticky Bottom Cart
+            // Sticky Bottom Cart Summary
             FixlyStickyCart(
-              line1: '+ ${selectedBrand.name} Selected',
-              line2: '+ Free Workshop Diagnosis',
-              buttonLabel: 'Select Model',
+              line1: '+ ${selectedBrand?.name ?? "Brand"}',
+              line2: '+ Free Diagnosis',
+              buttonLabel: 'Select Model ›',
               onAction: widget.onNext,
             ),
           ],
@@ -169,44 +171,31 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
   Widget _buildBrandLogo(DeviceBrand brand) {
     if (brand.id == 'xiaomi') {
       return Container(
-        width: 38,
-        height: 38,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: const Color(0xFFFF6900),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(6),
         ),
-        alignment: Alignment.center,
-        child: const Text('mi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
+        child: const Text('mi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
       );
     } else if (brand.id == 'oneplus') {
       return Container(
-        width: 36,
-        height: 36,
+        padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.red, width: 2),
-          borderRadius: BorderRadius.circular(6),
+          color: const Color(0xFFEB0029),
+          borderRadius: BorderRadius.circular(4),
         ),
-        alignment: Alignment.center,
-        child: const Text('1+', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
+        child: const Text('1+', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
       );
-    } else if (brand.id == 'apple') {
-      return const Icon(Icons.apple, color: Colors.white, size: 36);
-    } else if (brand.id == 'google') {
-      return const Text('G', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 26));
     }
+
     return Text(
       brand.logoText,
-      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14),
-      maxLines: 1,
+      style: TextStyle(
+        color: brand.primaryColorValue != null ? Color(brand.primaryColorValue!) : Colors.white,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
     );
   }
-}
-
-class RadialGridDelegateWithFixedCrossAxisCount extends SliverGridDelegateWithFixedCrossAxisCount {
-  const RadialGridDelegateWithFixedCrossAxisCount({
-    required super.crossAxisCount,
-    super.mainAxisSpacing,
-    super.crossAxisSpacing,
-    super.childAspectRatio,
-  });
 }

@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: fixly_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fixly
+    ports:
+      - "5432:5432"
+    volumes:
+      - fixly_pgdata:/var/lib/postgresql/data
+
+volumes:
+  fixly_pgdata:

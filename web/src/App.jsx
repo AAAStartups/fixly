@@ -43,6 +43,7 @@ import {
   ISSUE_CATEGORIES,
   POPULAR_REPAIRS
 } from './data';
+import { createOrder } from './services/api';
 
 export default function App() {
   // Wizard step: 0 = Home, 1 = Brand, 2 = Model, 3 = Service, 4 = Time, 5 = Booking Details, 6 = Tracking
@@ -71,6 +72,15 @@ export default function App() {
 
   const handleConfirmOrder = () => {
     triggerConfetti();
+    createOrder({
+      modelId: selectedModel?.id || 'xm-11t-pro',
+      brandId: selectedBrand?.id || 'xiaomi',
+      serviceId: selectedService?.id || 'display',
+      pickupDate: selectedDate || '19 Oct',
+      pickupSlot: selectedTime || '10:00 AM',
+      pickupAddress: 'B-402, Green Glen Layout, Bellandur, Bengaluru',
+      issueDescription: `${selectedService?.title || 'Hardware'} repair service`,
+    }).catch((err) => console.warn('[Fixly Web] Order submission to backend failed:', err.message));
     setStep(6);
   };
 

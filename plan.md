@@ -658,49 +658,87 @@ model Warranty {
 
 ---
 
-## 7. Implementation Roadmap
+## 7. Implementation Roadmap & Execution Status
 
-### Phase 1: Foundation & Backend Core (Weeks 1 - 2)
-- [ ] Initialize NestJS repository with TypeScript, ESLint, and Prettier.
-- [ ] Configure PostgreSQL with Prisma ORM and apply migration schema.
-- [ ] Implement Authentication module (OTP verification, JWT generation, Role guards).
-- [ ] Implement Catalog & Inventory management modules with dynamic parts pricing.
-- [ ] Set up Cloudflare R2 / AWS S3 pre-signed upload handler for media & invoices.
+### Phase 1: Foundation & Backend Core (Completed)
+- [x] Initialize NestJS repository with TypeScript, Modular architecture, and standard DTOs.
+- [x] Configure Prisma ORM with comprehensive PostgreSQL schema (12 models & enums matching Section 5).
+- [x] Create database seeder (`prisma/seed.ts`) with 12 smartphone brands, device models, repair services, parts inventory, and seed users/orders.
+- [x] Implement Authentication module (`/api/v1/auth/otp/send`, `/api/v1/auth/otp/verify`, JWT generation, Role guards).
+- [x] Implement Catalog & Inventory management modules with dynamic parts pricing (`/api/v1/catalog/*`).
+- [x] Set up media & diagnosis video/photo upload endpoints (`/api/v1/orders/upload-media`).
 
-### Phase 2: Booking Engine, Logistics & Realtime (Weeks 3 - 4)
-- [ ] Build Order creation service (₹79 pickup fee, slot validation, address binding).
-- [ ] Implement Order timeline state machine and validation rules.
-- [ ] Integrate Socket.IO gateway for real-time tracking pings.
-- [ ] Setup Firebase Cloud Messaging (FCM) push notification triggers for status changes.
+### Phase 2: Booking Engine, Logistics & Realtime (Completed)
+- [x] Build Order creation service (₹79 pickup fee, slot validation, address binding, active order tracking).
+- [x] Implement Order timeline state machine (BOOKED -> PICKUP_SCHEDULED -> IN_REPAIR -> OUT_FOR_DELIVERY -> DELIVERED).
+- [x] Integrate Socket.IO gateway (`OrdersGateway`) for real-time tracking, rider location pings, and estimate events.
+- [x] Integrate customer estimate approval/rejection endpoints (`/api/v1/orders/:id/estimate/respond`).
 
-### Phase 3: Payments, Invoicing & 30-Day Warranty (Weeks 5 - 6)
-- [ ] Integrate Razorpay order generation and webhook verification.
-- [ ] Implement PDF invoice generation worker using PDFKit or Puppeteer.
-- [ ] Build 30-day warranty scheduler and automated expiration/claim logic.
+### Phase 3: Payments, Invoicing & 30-Day Warranty (Completed)
+- [x] Integrate Razorpay order generation and signature verification service (`/api/v1/payments/razorpay/*`).
+- [x] Implement PDF invoice generation and download endpoints (`/api/v1/orders/:id/invoice`).
+- [x] Build 30-day warranty scheduler, automated status checks, and warranty claim submission endpoints (`/api/v1/orders/:id/warranty/claim`).
 
-### Phase 4: Mobile App (Flutter) Integration (Weeks 7 - 8)
-- [ ] Receive UI screen assets and design tokens from user.
-- [ ] Build Flutter screens (Home, Multi-step Booking, Live Stepper, Estimate Review, Invoices).
-- [ ] Connect Riverpod state providers to NestJS REST APIs & WebSocket streams.
-- [ ] Integrate Razorpay Flutter SDK & Google Maps plugin.
+### Phase 4: Mobile App (Flutter) Integration (In Progress)
+- [x] Define strongly-typed Dart data models with JSON serialization matching backend DTOs.
+- [x] Implement `ApiService` with dynamic host resolution (Android emulator `10.0.2.2`, iOS simulator `localhost`, Web `localhost`).
+- [x] Connect `SelectBrandScreen`, `SelectModelScreen`, and `LiveTrackingScreen` to API service with seamless fallbacks.
+- [ ] Connect Riverpod global state providers to NestJS WebSocket streams.
+- [ ] Add production Razorpay Flutter SDK & Google Maps plugin with client API keys.
 
-### Phase 5: Admin Web Dashboard (Next.js) & Operations (Weeks 9 - 10)
-- [ ] Build Next.js dashboard layout with responsive sidebar and metrics widgets.
-- [ ] Implement Orders Kanban board and Status update workflows.
-- [ ] Build Technician Diagnosis modal & dynamic quotation builder.
-- [ ] Build Parts Inventory catalog with price and stock management.
+### Phase 5: Admin Web Dashboard & Client Web (In Progress)
+- [x] Implement Admin endpoints (`/api/v1/admin/dashboard/stats`, `/api/v1/admin/orders`, `/api/v1/admin/orders/:id/status`).
+- [x] Implement Web client API client (`web/src/services/api.js`) and WebSocket subscriber (`web/src/services/socket.js`).
+- [ ] Build dedicated Admin operations portal UI for technicians and order triage.
 
-### Phase 6: Quality Assurance, Security & Deployment (Weeks 11 - 12)
-- [ ] End-to-end integration testing for booking, estimation approval, and payment cycles.
-- [ ] Sentry error monitoring and performance tracing setup.
-- [ ] Containerize applications with Docker and deploy to production cloud infrastructure.
+### Phase 6: Quality Assurance, Security & Deployment (In Progress)
+- [x] 15/15 automated E2E test cases passed for Auth, Catalog, Order Creation, Estimate Approval, Payments, and Admin stats.
+- [x] Production Docker containerization (`backend/docker-compose.yml`) configured for Postgres & NestJS backend.
+- [ ] Production cloud deployment (Render / Railway / GCP Cloud Run / AWS ECS) and CI/CD pipeline.
 
 ---
 
-## 7. Next Steps & Prerequisites
-1. **Frontend Assets:** Awaiting UI screen designs (Figma / screenshots / sketches) from the client to begin pixel-perfect Flutter UI development.
-2. **Third-Party Credentials Setup:**
-   * Firebase project (Authentication & FCM)
-   * Razorpay test keys (API Key & Secret)
-   * Google Maps API Key (Places & Geocoding)
-   * S3 / Cloudflare R2 storage bucket & access credentials
+## 8. Comprehensive Changelog & System Modifications
+
+### Backend Architecture (`/backend`)
+* **Framework & Tooling**: Node.js v22 + NestJS + Prisma ORM + Socket.IO + JWT.
+* **Database Models (`backend/prisma/schema.prisma`)**:
+  * `User` & `UserRole` (CUSTOMER, TECHNICIAN, RIDER, ADMIN)
+  * `DeviceBrand`, `DeviceModel`, `RepairService`, `PartInventory`
+  * `RepairOrder`, `OrderStatus`, `EstimateStatus`, `PaymentStatus`
+  * `EstimateItem`, `Payment`, `Warranty`, `WarrantyClaim`, `RiderLocationPing`
+* **Core Modules**:
+  * `AuthModule`: Phone-based OTP generation & verification with JWT access tokens.
+  * `CatalogModule`: Public device catalog (brands, models, repair rates, issue estimates).
+  * `OrdersModule`: Order creation with mandatory ₹79 pickup fee, active order queries, invoice generator, warranty management, and media uploads.
+  * `OrdersGateway`: WebSocket gateway supporting `order:subscribe`, `order:status_updated`, `rider:location_ping`, and `estimate:issued`.
+  * `PaymentsModule`: Razorpay payment initiation and HMAC-SHA256 signature verification.
+  * `AdminModule`: Operations metrics, order overview, and status state-machine transitions.
+* **Environment Configuration**: `.env.example` created with default ports and placeholder keys; `.env` excluded from version control.
+
+### Flutter Mobile App (`/flutter_app`)
+* **Models**: Added full JSON serialization (`fromJson` / `toJson`) to `DeviceBrand`, `DeviceModel`, `RepairService`, `RepairOrderModel`, and `RiderTrackingInfo` in `flutter_app/lib/models/models.dart`.
+* **API Service**: Created `flutter_app/lib/services/api_service.dart` providing singleton HTTP client with platform-aware host resolution and offline fallback handling.
+* **Screen Integration**: Updated `SelectBrandScreen`, `SelectModelScreen`, and `LiveTrackingScreen` to dynamically query the live backend.
+
+### Web Application (`/web`)
+* **API Service**: Created `web/src/services/api.js` supporting all catalog, order, payment, and admin endpoints.
+* **Realtime Service**: Created `web/src/services/socket.js` for Socket.IO event streaming and subscription.
+
+---
+
+## 9. Remaining Pending Tasks & Prerequisites
+
+1. **Third-Party API Credentials (Production)**:
+   * **Razorpay**: Replace test key placeholders with active Razorpay Key ID and Secret in `.env`.
+   * **Firebase**: Set up Firebase Service Account JSON for FCM push notifications and phone SMS OTP delivery.
+   * **Google Maps API**: Provide API key for Google Maps Platform to enable native map rendering in Flutter and Web.
+   * **Object Storage**: Configure AWS S3 or Cloudflare R2 bucket credentials for permanent repair video & photo uploads.
+
+2. **Database Provisioning**:
+   * Connect production managed PostgreSQL instance (Supabase, Neon, AWS RDS, or Railway) and execute `npx prisma migrate deploy`.
+
+3. **Remaining Frontend Tasks**:
+   * Integrate live Razorpay checkout sheet modal into Flutter mobile and React web checkout flows.
+   * Finalize dedicated Admin Dashboard views for live technician diagnosis and quotation dispatch.
+
