@@ -223,7 +223,7 @@ class HomeScreen extends StatelessWidget {
 
               // Horizontal Carousel
               SizedBox(
-                height: 140,
+                height: 148,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -295,7 +295,7 @@ class HomeScreen extends StatelessWidget {
     return Container(
       width: 120,
       margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -304,9 +304,10 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 32),
-          const SizedBox(height: 10),
+          Icon(icon, color: Colors.white, size: 26),
+          const SizedBox(height: 6),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -316,7 +317,7 @@ class HomeScreen extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             price,
             style: const TextStyle(
