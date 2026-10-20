@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
+import '../widgets/custom_widgets.dart';
 
 class BookingsTabScreen extends StatefulWidget {
   final VoidCallback onStartNewBooking;
@@ -25,6 +27,7 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,9 +39,9 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'MY REPAIRS',
-                        style: TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           color: AppColors.textSecondary,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
@@ -47,11 +50,11 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                       ),
                       const SizedBox(height: 2),
                       RichText(
-                        text: const TextSpan(
+                        text: TextSpan(
                           children: [
                             TextSpan(
                               text: 'Fixly ',
-                              style: TextStyle(
+                              style: GoogleFonts.outfit(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.w900,
@@ -59,7 +62,7 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                             ),
                             TextSpan(
                               text: 'Bookings',
-                              style: TextStyle(
+                              style: GoogleFonts.outfit(
                                 color: AppColors.primaryRed,
                                 fontSize: 24,
                                 fontWeight: FontWeight.w900,
@@ -72,36 +75,41 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                   ),
 
                   // Start new booking button
-                  InkWell(
-                    onTap: widget.onStartNewBooking,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryRed,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primaryRed.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: widget.onStartNewBooking,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Ink(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFFF2B42), Color(0xFFD91E33)],
                           ),
-                        ],
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.add, color: Colors.white, size: 16),
-                          SizedBox(width: 4),
-                          Text(
-                            'New Repair',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primaryRed.withOpacity(0.3),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.add, color: Colors.white, size: 16),
+                            const SizedBox(width: 4),
+                            Text(
+                              'New Repair',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -128,26 +136,41 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.access_time_filled_rounded, color: AppColors.primaryRed, size: 16),
-                        SizedBox(width: 6),
+                        const Icon(Icons.access_time_filled_rounded, color: AppColors.primaryRed, size: 16),
+                        const SizedBox(width: 6),
                         Text(
                           'Active Repair',
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                          style: GoogleFonts.outfit(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ],
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryRed.withOpacity(0.15),
+                        color: AppColors.redSubtle,
                         border: Border.all(color: AppColors.primaryRed.withOpacity(0.4)),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Text(
-                        'IN LAB',
-                        style: TextStyle(color: AppColors.primaryRed, fontSize: 10, fontWeight: FontWeight.w800),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const FixlyPulseDot(size: 6),
+                          const SizedBox(width: 5),
+                          Text(
+                            'IN LAB',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.primaryRed,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -159,13 +182,17 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
 
               // 2. PAST COMPLETED ORDERS SECTION
               if (_selectedFilter == 0 || _selectedFilter == 2) ...[
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.history_rounded, color: AppColors.textSecondary, size: 16),
-                    SizedBox(width: 6),
+                    const Icon(Icons.history_rounded, color: AppColors.textSecondary, size: 16),
+                    const SizedBox(width: 6),
                     Text(
                       'Past Service History',
-                      style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                      style: GoogleFonts.outfit(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),
@@ -204,24 +231,25 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceElevated,
+                        color: AppColors.redSubtle,
                         borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.primaryRed.withOpacity(0.3)),
                       ),
                       child: const Icon(Icons.shield_outlined, color: AppColors.primaryRed, size: 24),
                     ),
                     const SizedBox(width: 14),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             '30-Day Fixly Warranty Protection',
-                            style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                            style: GoogleFonts.outfit(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
                           ),
-                          SizedBox(height: 2),
+                          const SizedBox(height: 2),
                           Text(
                             'Every repair includes 30 days of hassle-free parts & labor coverage with zero questions asked.',
-                            style: TextStyle(color: AppColors.textSecondary, fontSize: 11, height: 1.3),
+                            style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11, height: 1.3),
                           ),
                         ],
                       ),
@@ -239,22 +267,29 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
 
   Widget _buildFilterChip(int index, String label) {
     final isSelected = _selectedFilter == index;
-    return InkWell(
-      onTap: () => setState(() => _selectedFilter = index),
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryRed : AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? AppColors.primaryRed : AppColors.border),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.textSecondary,
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => setState(() => _selectedFilter = index),
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.surfaceHighlight : AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? AppColors.primaryRed : AppColors.border,
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.plusJakartaSans(
+              color: isSelected ? Colors.white : AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            ),
           ),
         ),
       ),
@@ -266,10 +301,10 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.primaryRed.withOpacity(0.5), width: 1.5),
+        border: Border.all(color: AppColors.primaryRed.withOpacity(0.4), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryRed.withOpacity(0.06),
+            color: AppColors.primaryRed.withOpacity(0.08),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -284,13 +319,14 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.surfaceElevated,
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.borderSubtle),
                   ),
-                  child: const Icon(Icons.phone_android_rounded, color: Colors.black87, size: 30),
+                  child: const Icon(Icons.phone_android_rounded, color: Colors.white, size: 26),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -300,17 +336,17 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             '#QF-2026-0042',
-                            style: TextStyle(
+                            style: GoogleFonts.outfit(
                               color: AppColors.primaryRed,
-                              fontSize: 12,
+                              fontSize: 13,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           Text(
                             '₹4,378',
-                            style: const TextStyle(
+                            style: GoogleFonts.outfit(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
@@ -319,18 +355,18 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      const Text(
+                      Text(
                         'Xiaomi 11T Pro 5G',
-                        style: TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           color: Colors.white,
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
+                      Text(
                         'Display Replacement (OEM)',
-                        style: TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           color: AppColors.textSecondary,
                           fontSize: 12,
                         ),
@@ -349,16 +385,16 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Stage 2 of 5: Device Received',
-                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                     ),
                     Text(
                       'Technician Diagnosis',
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                      style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
                     ),
                   ],
                 ),
@@ -397,25 +433,26 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.calendar_today_rounded, color: AppColors.textSecondary, size: 13),
-                    SizedBox(width: 6),
+                    const Icon(Icons.calendar_today_rounded, color: AppColors.textSecondary, size: 13),
+                    const SizedBox(width: 6),
                     Text(
                       'Pickup: 10:00 AM, 19 Oct',
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.black26,
+                    color: AppColors.surfaceElevated,
                     borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: AppColors.borderSubtle),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Pay After Repair',
-                    style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w600),
+                    style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -427,37 +464,43 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
           // Action Buttons
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: widget.onTrackActiveOrder,
-                    borderRadius: BorderRadius.circular(24),
-                    child: Container(
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryRed,
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.track_changes_rounded, color: Colors.white, size: 16),
-                          SizedBox(width: 6),
-                          Text(
-                            'Track Repair Details',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: widget.onTrackActiveOrder,
+                borderRadius: BorderRadius.circular(14),
+                child: Ink(
+                  height: 44,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFF2B42), Color(0xFFD91E33)],
                     ),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryRed.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.track_changes_rounded, color: Colors.white, size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Track Repair Details',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -490,17 +533,18 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
             children: [
               Text(
                 orderId,
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
+                style: GoogleFonts.outfit(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.white10,
+                  color: AppColors.surfaceElevated,
                   borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: AppColors.borderSubtle),
                 ),
-                child: const Text(
+                child: Text(
                   'DELIVERED',
-                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
                 ),
               ),
             ],
@@ -516,17 +560,17 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                   children: [
                     Text(
                       device,
-                      style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700),
+                      style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       service,
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                      style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 12),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       'Completed $date • Paid $amount',
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                      style: GoogleFonts.plusJakartaSans(color: AppColors.textMuted, fontSize: 11),
                     ),
                   ],
                 ),
@@ -534,7 +578,7 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          const Divider(height: 1, color: AppColors.border),
+          const Divider(height: 1, color: AppColors.borderSubtle),
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -551,7 +595,7 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                     hasWarranty
                         ? '$warrantyRemainingDays days warranty remaining'
                         : 'Warranty expired',
-                    style: TextStyle(
+                    style: GoogleFonts.plusJakartaSans(
                       color: hasWarranty ? AppColors.primaryRed : AppColors.textSecondary,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -560,18 +604,25 @@ class _BookingsTabScreenState extends State<BookingsTabScreen> {
                 ],
               ),
               if (hasWarranty)
-                InkWell(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Warranty claim submitted! Our support team will call you within 15 mins.'),
-                        backgroundColor: AppColors.primaryRed,
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Warranty claim submitted! Our support team will call you within 15 mins.'),
+                          backgroundColor: AppColors.primaryRed,
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(4),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                      child: Text(
+                        'Claim Warranty ›',
+                        style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
                       ),
-                    );
-                  },
-                  child: const Text(
-                    'Claim Warranty ›',
-                    style: TextStyle(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
             ],

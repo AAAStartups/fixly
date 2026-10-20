@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_widgets.dart';
 
 class DashboardTabScreen extends StatelessWidget {
   final VoidCallback onStartNewBooking;
@@ -17,6 +19,7 @@ class DashboardTabScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,23 +35,27 @@ class DashboardTabScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      width: 54,
-                      height: 54,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryRed,
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFFF2B42), Color(0xFFD91E33)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primaryRed,
+                            color: AppColors.primaryRed.withOpacity(0.35),
                             blurRadius: 10,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           'AK',
-                          style: TextStyle(
+                          style: GoogleFonts.outfit(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -57,7 +64,7 @@ class DashboardTabScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -65,20 +72,20 @@ class DashboardTabScreen extends StatelessWidget {
                             children: [
                               Text(
                                 'Akshay Kumar',
-                                style: TextStyle(
+                                style: GoogleFonts.outfit(
                                   color: Colors.white,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w800,
                                 ),
                               ),
-                              SizedBox(width: 6),
-                              Icon(Icons.verified, color: AppColors.primaryRed, size: 16),
+                              const SizedBox(width: 6),
+                              const Icon(Icons.verified, color: AppColors.primaryRed, size: 16),
                             ],
                           ),
-                          SizedBox(height: 3),
+                          const SizedBox(height: 3),
                           Text(
                             '+91 98765 43210',
-                            style: TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                               color: AppColors.textSecondary,
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -90,18 +97,18 @@ class DashboardTabScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryRed.withOpacity(0.12),
+                        color: AppColors.redSubtle,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: AppColors.primaryRed.withOpacity(0.4)),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.workspace_premium_rounded, color: AppColors.primaryRed, size: 14),
-                          SizedBox(width: 4),
+                          const Icon(Icons.workspace_premium_rounded, color: AppColors.primaryRed, size: 14),
+                          const SizedBox(width: 4),
                           Text(
                             'PRO',
-                            style: TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                               color: AppColors.primaryRed,
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
@@ -170,7 +177,7 @@ class DashboardTabScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.primaryRed.withOpacity(0.2),
+                      AppColors.primaryRed.withOpacity(0.15),
                       AppColors.surface,
                     ],
                     begin: Alignment.topLeft,
@@ -185,13 +192,13 @@ class DashboardTabScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.verified_user_rounded, color: AppColors.primaryRed, size: 20),
-                            SizedBox(width: 8),
+                            const Icon(Icons.verified_user_rounded, color: AppColors.primaryRed, size: 20),
+                            const SizedBox(width: 8),
                             Text(
                               'Fixly 30-Day Guarantee',
-                              style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                              style: GoogleFonts.outfit(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -201,17 +208,17 @@ class DashboardTabScreen extends StatelessWidget {
                             color: AppColors.primaryRed,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
+                          child: Text(
                             '14 Days Remaining',
-                            style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
+                            style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       'iPhone 13 128GB — OEM Battery Replacement',
-                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
                     // Progress bar
@@ -221,22 +228,25 @@ class DashboardTabScreen extends StatelessWidget {
                         value: 14 / 30,
                         backgroundColor: AppColors.border,
                         valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryRed),
-                        minHeight: 6,
+                        minHeight: 5,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
+                        Text(
                           'Coverage: Parts & Workmanship',
-                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                          style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
                         ),
-                        InkWell(
-                          onTap: onNavigateToBookings,
-                          child: const Text(
-                            'View Details ›',
-                            style: TextStyle(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: onNavigateToBookings,
+                            child: Text(
+                              'View Details ›',
+                              style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
+                            ),
                           ),
                         ),
                       ],
@@ -251,21 +261,27 @@ class DashboardTabScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Device Vault',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
                   ),
-                  InkWell(
-                    onTap: onStartNewBooking,
-                    child: const Row(
-                      children: [
-                        Icon(Icons.add, color: AppColors.primaryRed, size: 16),
-                        SizedBox(width: 2),
-                        Text(
-                          'Add Device',
-                          style: TextStyle(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onStartNewBooking,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.add, color: AppColors.primaryRed, size: 16),
+                            const SizedBox(width: 2),
+                            Text(
+                              'Add Device',
+                              style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
@@ -298,9 +314,9 @@ class DashboardTabScreen extends StatelessWidget {
               const SizedBox(height: 22),
 
               // Quick Action Tiles
-              const Text(
+              Text(
                 'Quick Actions',
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 10),
               _buildActionTile(
@@ -373,13 +389,14 @@ class DashboardTabScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.surfaceElevated,
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.borderSubtle),
             ),
             child: Icon(icon, color: Colors.white, size: 20),
           ),
           const SizedBox(height: 12),
           Text(
             value,
-            style: TextStyle(
+            style: GoogleFonts.outfit(
               color: valueColor ?? Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w800,
@@ -388,7 +405,7 @@ class DashboardTabScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             title,
-            style: const TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               color: Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -397,7 +414,7 @@ class DashboardTabScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: const TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               color: AppColors.textSecondary,
               fontSize: 10,
             ),
@@ -427,10 +444,11 @@ class DashboardTabScreen extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surfaceElevated,
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.borderSubtle),
             ),
-            child: const Icon(Icons.phone_android_rounded, color: Colors.black87, size: 22),
+            child: const Icon(Icons.phone_android_rounded, color: Colors.white, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -439,12 +457,12 @@ class DashboardTabScreen extends StatelessWidget {
               children: [
                 Text(
                   model,
-                  style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   status,
-                  style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.plusJakartaSans(color: statusColor, fontSize: 11, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -477,16 +495,17 @@ class DashboardTabScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.surfaceElevated,
             borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.borderSubtle),
           ),
           child: Icon(icon, color: Colors.white, size: 20),
         ),
         title: Text(
           title,
-          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+          style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
           subtitle,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+          style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
         ),
         trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 18),
       ),

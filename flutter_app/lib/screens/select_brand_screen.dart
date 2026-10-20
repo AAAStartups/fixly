@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
@@ -25,8 +26,8 @@ class SelectBrandScreen extends StatefulWidget {
 class _SelectBrandScreenState extends State<SelectBrandScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  List<DeviceBrand> _brands = [];
-  bool _isLoading = true;
+  List<DeviceBrand> _brands = ApiService.fallbackBrands;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -34,12 +35,17 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
     _loadBrands();
   }
 
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> _loadBrands() async {
     final brands = await ApiService().fetchBrands();
-    if (mounted) {
+    if (mounted && brands.isNotEmpty) {
       setState(() {
         _brands = brands;
-        _isLoading = false;
       });
     }
   }
@@ -70,9 +76,9 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Container(
-                height: 48,
+                height: 50,
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: AppColors.surfaceElevated,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: AppColors.border),
                 ),
@@ -85,15 +91,26 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
                       child: TextField(
                         controller: _searchController,
                         onChanged: (val) => setState(() => _searchQuery = val),
-                        style: const TextStyle(color: Colors.white, fontSize: 14),
-                        decoration: const InputDecoration(
-                          hintText: 'Search for brand or model (eg. iPhone 14)',
-                          hintStyle: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                        style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 14),
+                        decoration: InputDecoration(
+                          hintText: 'Search for brand (e.g. Apple, Samsung, Xiaomi)',
+                          hintStyle: GoogleFonts.plusJakartaSans(color: AppColors.textMuted, fontSize: 13),
                           border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
                           isDense: true,
+                          contentPadding: EdgeInsets.zero,
                         ),
                       ),
                     ),
+                    if (_searchQuery.isNotEmpty)
+                      GestureDetector(
+                        onTap: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                        child: const Icon(Icons.close, color: AppColors.textMuted, size: 18),
+                      ),
                   ],
                 ),
               ),
@@ -105,54 +122,90 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
                   ? const Center(
                       child: CircularProgressIndicator(color: AppColors.primaryRed),
                     )
-                  : GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 1.05,
-                      ),
-                      itemCount: filteredBrands.length,
-                      itemBuilder: (context, index) {
-                        final brand = filteredBrands[index];
-                        final isSelected = selectedBrand?.id == brand.id;
-
-                        return InkWell(
-                          onTap: () {
-                            widget.onBrandSelected(brand);
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.primaryRed.withOpacity(0.08)
-                                  : AppColors.surface,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: isSelected ? AppColors.primaryRed : AppColors.border,
-                                width: isSelected ? 2 : 1,
+                  : filteredBrands.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.search_off_rounded, color: AppColors.textMuted, size: 48),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No brands found matching "$_searchQuery"',
+                                style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 14),
                               ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildBrandLogo(brand),
-                                const SizedBox(height: 8),
-                                Text(
-                                  brand.name,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                            ],
+                          ),
+                        )
+                      : GridView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 1.05,
+                          ),
+                          itemCount: filteredBrands.length,
+                          itemBuilder: (context, index) {
+                            final brand = filteredBrands[index];
+                            final isSelected = selectedBrand?.id == brand.id;
+
+                            return Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => widget.onBrandSelected(brand),
+                                borderRadius: BorderRadius.circular(16),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? AppColors.surfaceHighlight : AppColors.surface,
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: isSelected ? AppColors.primaryRed : AppColors.border,
+                                      width: isSelected ? 1.5 : 1,
+                                    ),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: AppColors.primaryRed.withOpacity(0.15),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ]
+                                        : null,
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Center(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            _buildBrandLogo(brand),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              brand.name,
+                                              style: GoogleFonts.plusJakartaSans(
+                                                color: Colors.white,
+                                                fontSize: 13,
+                                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      if (isSelected)
+                                        const Positioned(
+                                          top: 8,
+                                          right: 8,
+                                          child: Icon(Icons.check_circle_rounded, color: AppColors.primaryRed, size: 16),
+                                        ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                              ),
+                            );
+                          },
+                        ),
             ),
 
             // Sticky Bottom Cart Summary
@@ -176,7 +229,7 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
           color: const Color(0xFFFF6900),
           borderRadius: BorderRadius.circular(6),
         ),
-        child: const Text('mi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+        child: const Text('mi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
       );
     } else if (brand.id == 'oneplus') {
       return Container(
@@ -185,16 +238,17 @@ class _SelectBrandScreenState extends State<SelectBrandScreen> {
           color: const Color(0xFFEB0029),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: const Text('1+', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+        child: const Text('1+', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
       );
     }
 
     return Text(
       brand.logoText,
-      style: TextStyle(
+      style: GoogleFonts.outfit(
         color: brand.primaryColorValue != null ? Color(brand.primaryColorValue!) : Colors.white,
         fontWeight: FontWeight.bold,
         fontSize: 16,
+        letterSpacing: 0.5,
       ),
     );
   }

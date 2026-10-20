@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_widgets.dart';
 
@@ -22,21 +23,22 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. Top App Bar
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                         children: [
                           TextSpan(
                             text: 'FIX',
-                            style: TextStyle(
+                            style: GoogleFonts.outfit(
                               color: Colors.white,
                               fontSize: 26,
                               fontWeight: FontWeight.w900,
@@ -45,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           TextSpan(
                             text: 'LY',
-                            style: TextStyle(
+                            style: GoogleFonts.outfit(
                               color: AppColors.primaryRed,
                               fontSize: 26,
                               fontWeight: FontWeight.w900,
@@ -55,34 +57,45 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    InkWell(
-                      onTap: onOpenNotifications,
-                      borderRadius: BorderRadius.circular(22),
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: const BoxDecoration(
-                          color: AppColors.surfaceElevated,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 22),
-                            if (unreadCount > 0)
-                              Positioned(
-                                top: 10,
-                                right: 12,
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.primaryRed,
-                                    shape: BoxShape.circle,
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: onOpenNotifications,
+                        borderRadius: BorderRadius.circular(22),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceElevated,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 22),
+                              if (unreadCount > 0)
+                                Positioned(
+                                  top: 10,
+                                  right: 11,
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primaryRed,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.primaryRed,
+                                          blurRadius: 4,
+                                          spreadRadius: 1,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -92,29 +105,44 @@ class HomeScreen extends StatelessWidget {
 
               // 2. Hero Section
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'PROFESSIONAL REPAIR SERVICE',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.5,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.redSubtle,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.primaryRed.withOpacity(0.3)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const FixlyPulseDot(size: 6),
+                          const SizedBox(width: 6),
+                          Text(
+                            'PROFESSIONAL REPAIR SERVICE',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.primaryRed,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 10),
                     RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
+                      text: TextSpan(
+                        style: GoogleFonts.outfit(
                           fontSize: 34,
                           fontWeight: FontWeight.w900,
                           height: 1.15,
-                          letterSpacing: -0.5,
+                          letterSpacing: -0.6,
                         ),
-                        children: [
+                        children: const [
                           TextSpan(text: 'Expert Care\n', style: TextStyle(color: Colors.white)),
                           TextSpan(text: 'for Your ', style: TextStyle(color: Colors.white)),
                           TextSpan(text: 'Device', style: TextStyle(color: AppColors.primaryRed)),
@@ -122,17 +150,34 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Fast. Reliable. Transparent.',
-                      style: TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textSecondary,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
+                    const SizedBox(height: 14),
+
+                    // Trust Value Badges
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildTrustPill(Icons.bolt_rounded, '60-Min Pickup'),
+                          const SizedBox(width: 8),
+                          _buildTrustPill(Icons.verified_user_rounded, 'Up to 6M Warranty'),
+                          const SizedBox(width: 8),
+                          _buildTrustPill(Icons.precision_manufacturing_rounded, 'OEM Grade Parts'),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
+
+              const SizedBox(height: 8),
 
               // 3. Issue Category Grid (2 Rows x 4 Columns = 8 Cards)
               Padding(
@@ -143,7 +188,7 @@ class HomeScreen extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 0.85,
+                  childAspectRatio: 0.82,
                   children: [
                     _buildIssueCard(
                       title: 'Display\nIssues',
@@ -208,21 +253,33 @@ class HomeScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Popular Repairs',
-                      style: TextStyle(
+                      style: GoogleFonts.outfit(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
                       ),
                     ),
                     TextButton(
                       onPressed: onStartBooking,
-                      child: const Row(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        minimumSize: Size.zero,
+                      ),
+                      child: Row(
                         children: [
-                          Text('View All', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-                          SizedBox(width: 4),
-                          Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 16),
+                          Text(
+                            'View All',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.textSecondary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 16),
                         ],
                       ),
                     ),
@@ -230,11 +287,14 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
+              const SizedBox(height: 8),
+
               // Horizontal Carousel
               SizedBox(
-                height: 148,
+                height: 154,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
                     _buildPopularCard('Screen\nReplacement', 'From ₹1,499', Icons.phone_android_rounded),
@@ -245,10 +305,90 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 24),
+
+              // 6. Guarantee Banner
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: AppColors.redSubtle,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.primaryRed.withOpacity(0.3)),
+                        ),
+                        child: const Icon(Icons.security_rounded, color: AppColors.primaryRed, size: 22),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Punarafix Assurance',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Doorstep pickup, zero diagnostic fee on repair, and up to 6 months warranty.',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                                height: 1.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTrustPill(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceElevated,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.borderSubtle),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: AppColors.primaryRed, size: 13),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.textPrimary,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -258,43 +398,56 @@ class HomeScreen extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: AppColors.issueCardBg,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      height: 1.1,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Ink(
+          padding: const EdgeInsets.all(9),
+          decoration: BoxDecoration(
+            color: AppColors.issueCardBg,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.issueCardBorder, width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textPrimary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        height: 1.15,
+                      ),
+                      maxLines: 2,
                     ),
-                    maxLines: 2,
                   ),
+                  const Icon(Icons.arrow_outward_rounded, color: AppColors.primaryRed, size: 13),
+                ],
+              ),
+              Center(
+                child: Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceElevated,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.borderSubtle),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
                 ),
-                const Icon(Icons.arrow_outward, color: AppColors.issueCardIcon, size: 14),
-              ],
-            ),
-            Center(
-              child: Icon(icon, color: AppColors.issueCardIcon, size: 30),
-            ),
-            const SizedBox(height: 2),
-          ],
+              ),
+              const SizedBox(height: 1),
+            ],
+          ),
         ),
       ),
     );
@@ -304,7 +457,7 @@ class HomeScreen extends StatelessWidget {
     return Container(
       width: 120,
       margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -313,26 +466,36 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white, size: 26),
-          const SizedBox(height: 6),
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceElevated,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.borderSubtle),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+          const SizedBox(height: 8),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               color: Colors.white,
               fontSize: 11,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
+              height: 1.15,
             ),
+            maxLines: 2,
           ),
           const SizedBox(height: 4),
           Text(
             price,
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
+            style: GoogleFonts.outfit(
+              color: AppColors.primaryRed,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],

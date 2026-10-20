@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
@@ -97,31 +98,45 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  InkWell(
-                    onTap: widget.onReturnHome,
-                    borderRadius: BorderRadius.circular(24),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: AppColors.surfaceElevated,
-                        shape: BoxShape.circle,
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: widget.onReturnHome,
+                      borderRadius: BorderRadius.circular(22),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceElevated,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                       ),
-                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                     ),
                   ),
                   Text(
                     'Order #$orderNum',
-                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
+                    style: GoogleFonts.outfit(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryRed.withOpacity(0.15),
+                      color: AppColors.redSubtle,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppColors.primaryRed.withOpacity(0.4)),
                     ),
-                    child: const Text('ACTIVE', style: TextStyle(color: AppColors.primaryRed, fontSize: 11, fontWeight: FontWeight.w800)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const FixlyPulseDot(size: 6),
+                        const SizedBox(width: 5),
+                        Text(
+                          'ACTIVE',
+                          style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 11, fontWeight: FontWeight.w800),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -129,6 +144,7 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
 
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,8 +163,17 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                             width: 48,
                             height: 48,
                             decoration: BoxDecoration(
-                              color: AppColors.primaryRed,
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFF2B42), Color(0xFFD91E33)],
+                              ),
                               borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primaryRed.withOpacity(0.3),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
                             child: const Icon(Icons.build_circle_rounded, color: Colors.white, size: 26),
                           ),
@@ -159,12 +184,12 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                               children: [
                                 Text(
                                   _formatStatus(currentStatus),
-                                  style: const TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
+                                  style: GoogleFonts.outfit(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'Doorstep Logistics & Lab Workshop',
-                                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                                  'Doorstep Logistics & Central Lab Workshop',
+                                  style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 12),
                                 ),
                               ],
                             ),
@@ -178,7 +203,7 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                     // Estimate Review Card if available
                     if (estimate != null) ...[
                       Container(
-                        padding: const EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(16),
@@ -187,36 +212,36 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Technician Itemized Estimate',
-                                  style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                                  style: GoogleFonts.outfit(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
                                 ),
                                 Text(
                                   'Transparent Pricing',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                                  style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
                                 ),
                               ],
                             ),
-                            const Divider(color: AppColors.border, height: 16),
+                            const Divider(color: AppColors.borderSubtle, height: 16),
                             ...estimate.items.map((it) => Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 2),
+                                  padding: const EdgeInsets.symmetric(vertical: 3),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(it.title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                                      Text('₹${it.amount.toInt()}', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                                      Text(it.title, style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 12)),
+                                      Text('₹${it.amount.toInt()}', style: GoogleFonts.outfit(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
                                     ],
                                   ),
                                 )),
-                            const Divider(color: AppColors.border, height: 16),
+                            const Divider(color: AppColors.borderSubtle, height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text('Total Quotation', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800)),
-                                Text('₹${estimate.totalAmount.toInt()}', style: const TextStyle(color: AppColors.primaryRed, fontSize: 17, fontWeight: FontWeight.w900)),
+                                Text('Total Quotation', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800)),
+                                Text('₹${estimate.totalAmount.toInt()}', style: GoogleFonts.outfit(color: AppColors.primaryRed, fontSize: 18, fontWeight: FontWeight.w900)),
                               ],
                             ),
                             if (estimate.isApproved == null || estimate.isApproved == false) ...[
@@ -229,9 +254,9 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                                       style: OutlinedButton.styleFrom(
                                         foregroundColor: Colors.white,
                                         side: const BorderSide(color: AppColors.border),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                                       ),
-                                      child: const Text('Decline'),
+                                      child: Text('Decline', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w600)),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
@@ -241,26 +266,27 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primaryRed,
                                         foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                                       ),
-                                      child: const Text('Approve Quote'),
+                                      child: Text('Approve Quote', style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700)),
                                     ),
                                   ),
                                 ],
                               ),
                             ] else ...[
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 8),
                               Container(
                                 width: double.infinity,
-                                padding: const EdgeInsets.symmetric(vertical: 6),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primaryRed.withOpacity(0.12),
+                                  color: AppColors.redSubtle,
                                   borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: AppColors.primaryRed.withOpacity(0.3)),
                                 ),
                                 alignment: Alignment.center,
-                                child: const Text(
+                                child: Text(
                                   '✔ Quotation Approved by You',
-                                  style: TextStyle(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
+                                  style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700),
                                 ),
                               ),
                             ],
@@ -283,25 +309,26 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                           Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: AppColors.surfaceElevated,
+                              color: AppColors.redSubtle,
                               borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppColors.primaryRed.withOpacity(0.3)),
                             ),
                             child: const Icon(Icons.shield_rounded, color: AppColors.primaryRed, size: 22),
                           ),
                           const SizedBox(width: 12),
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('30-Day FIXLY Warranty', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
-                                SizedBox(height: 2),
-                                Text('Covers parts & workmanship with free revisit', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                                Text('30-Day FIXLY Warranty', style: GoogleFonts.outfit(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
+                                const SizedBox(height: 2),
+                                Text('Covers parts & workmanship with free revisit', style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11)),
                               ],
                             ),
                           ),
                           TextButton(
                             onPressed: _isActionInProgress ? null : _handleWarrantyClaim,
-                            child: const Text('Claim ›', style: TextStyle(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700)),
+                            child: Text('Claim ›', style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 12, fontWeight: FontWeight.w700)),
                           ),
                         ],
                       ),
@@ -309,9 +336,9 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
 
                     const SizedBox(height: 20),
 
-                    const Text(
+                    Text(
                       'Repair Journey Timeline',
-                      style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
+                      style: GoogleFonts.outfit(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
                     ),
                     const SizedBox(height: 14),
 
@@ -436,11 +463,23 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                   color: isCurrent ? AppColors.primaryRed : AppColors.border,
                   width: 2,
                 ),
+                boxShadow: isCurrent
+                    ? [
+                        BoxShadow(
+                          color: AppColors.primaryRed.withOpacity(0.4),
+                          blurRadius: 6,
+                          spreadRadius: 1,
+                        ),
+                      ]
+                    : null,
               ),
               alignment: Alignment.center,
               child: isCompleted
                   ? const Icon(Icons.check, color: Colors.white, size: 16)
-                  : Text(stepNum, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                  : Text(
+                      stepNum,
+                      style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
             ),
             if (!isLast)
               Container(
@@ -455,11 +494,20 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
+              Text(
+                title,
+                style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14),
+              ),
               const SizedBox(height: 1),
-              Text(time, style: const TextStyle(color: AppColors.primaryRed, fontSize: 11, fontWeight: FontWeight.w600)),
+              Text(
+                time,
+                style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 11, fontWeight: FontWeight.w600),
+              ),
               const SizedBox(height: 2),
-              Text(desc, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+              Text(
+                desc,
+                style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
+              ),
               const SizedBox(height: 14),
             ],
           ),

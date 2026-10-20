@@ -52,7 +52,7 @@ class DeviceModel {
     required this.name,
     required this.year,
     required this.network,
-    required this.imageUrl,
+    this.imageUrl = '',
   });
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) {

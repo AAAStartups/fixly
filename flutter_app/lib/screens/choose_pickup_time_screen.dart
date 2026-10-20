@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
@@ -70,10 +71,13 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
             // Scrollable Content
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 8),
+
                     // Logistics Hero Card
                     Container(
                       padding: const EdgeInsets.all(16),
@@ -89,9 +93,13 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 RichText(
-                                  text: const TextSpan(
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, height: 1.2),
-                                    children: [
+                                  text: TextSpan(
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.2,
+                                    ),
+                                    children: const [
                                       TextSpan(text: "We'll ", style: TextStyle(color: Colors.white)),
                                       TextSpan(text: "pickup\n", style: TextStyle(color: AppColors.primaryRed)),
                                       TextSpan(text: "your device", style: TextStyle(color: Colors.white)),
@@ -99,9 +107,9 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                const Text(
+                                Text(
                                   'Safe  |  Verified  |  Tracked',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                                  style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
                                 ),
                                 const SizedBox(height: 12),
                                 _buildBullet(Icons.verified_user_rounded, 'Verified pickup partner'),
@@ -113,22 +121,23 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                             ),
                           ),
 
-                          // Scooter Rider Graphic
+                          // Scooter Rider Graphic Container
                           Container(
-                            width: 110,
+                            width: 100,
                             height: 100,
                             decoration: BoxDecoration(
                               color: AppColors.surfaceElevated,
                               borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColors.borderSubtle),
                             ),
                             child: const Stack(
                               alignment: Alignment.center,
                               children: [
-                                Icon(Icons.two_wheeler_rounded, color: Colors.white, size: 52),
+                                Icon(Icons.two_wheeler_rounded, color: Colors.white, size: 48),
                                 Positioned(
-                                  top: 10,
+                                  top: 12,
                                   right: 12,
-                                  child: Icon(Icons.location_on_rounded, color: AppColors.primaryRed, size: 22),
+                                  child: Icon(Icons.location_on_rounded, color: AppColors.primaryRed, size: 20),
                                 ),
                               ],
                             ),
@@ -143,11 +152,18 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.calendar_today_rounded, color: Colors.white, size: 18),
-                            SizedBox(width: 8),
-                            Text('Select pickup date', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
+                            const Icon(Icons.calendar_today_rounded, color: Colors.white, size: 17),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Select pickup date',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ],
                         ),
                         Container(
@@ -157,10 +173,14 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: AppColors.border),
                           ),
-                          child: const Row(
+                          child: Row(
                             children: [
-                              Text('This Week', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                              Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 16),
+                              Text(
+                                'This Week',
+                                style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
+                              ),
+                              const SizedBox(width: 2),
+                              const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary, size: 16),
                             ],
                           ),
                         ),
@@ -171,9 +191,10 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
 
                     // 7-day horizontal list
                     SizedBox(
-                      height: 82,
+                      height: 84,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
                         itemCount: _dates.length,
                         itemBuilder: (context, index) {
                           final item = _dates[index];
@@ -183,60 +204,64 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                           return Container(
                             width: 58,
                             margin: const EdgeInsets.only(right: 8),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() => _selectedDate = dateKey);
-                                widget.onDateTimeSelected(_selectedDate, _selectedTimeSlot);
-                              },
-                              borderRadius: BorderRadius.circular(14),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surface,
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: isSelected ? AppColors.primaryRed : AppColors.border,
-                                    width: isSelected ? 2 : 1,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() => _selectedDate = dateKey);
+                                  widget.onDateTimeSelected(_selectedDate, _selectedTimeSlot);
+                                },
+                                borderRadius: BorderRadius.circular(14),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? AppColors.surfaceHighlight : AppColors.surface,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: isSelected ? AppColors.primaryRed : AppColors.border,
+                                      width: isSelected ? 1.5 : 1,
+                                    ),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: AppColors.primaryRed.withOpacity(0.15),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ]
+                                        : null,
                                   ),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: AppColors.primaryRed.withOpacity(0.15),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ]
-                                      : null,
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      item['day']!,
-                                      style: TextStyle(
-                                        color: isSelected ? AppColors.primaryRed : AppColors.textSecondary,
-                                        fontSize: 11,
-                                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        item['day']!,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: isSelected ? AppColors.primaryRed : AppColors.textSecondary,
+                                          fontSize: 11,
+                                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      item['date']!,
-                                      style: TextStyle(
-                                        color: isSelected ? AppColors.primaryRed : Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w800,
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        item['date']!,
+                                        style: GoogleFonts.outfit(
+                                          color: isSelected ? AppColors.primaryRed : Colors.white,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w800,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      item['month']!,
-                                      style: TextStyle(
-                                        color: isSelected ? AppColors.primaryRed : AppColors.textSecondary,
-                                        fontSize: 10,
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        item['month']!,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: isSelected ? AppColors.primaryRed : AppColors.textSecondary,
+                                          fontSize: 10,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -248,21 +273,31 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                     const SizedBox(height: 20),
 
                     // Time Slot Section
-                    const Row(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.access_time_rounded, color: Colors.white, size: 18),
-                            SizedBox(width: 8),
-                            Text('Select pickup time', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700)),
+                            const Icon(Icons.access_time_rounded, color: Colors.white, size: 17),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Select pickup time',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ],
                         ),
                         Row(
                           children: [
-                            Icon(Icons.info_outline_rounded, color: AppColors.textSecondary, size: 14),
-                            SizedBox(width: 4),
-                            Text('Repair in 60 mins', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                            const Icon(Icons.bolt_rounded, color: AppColors.primaryRed, size: 14),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Repair in 60 mins',
+                              style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
+                            ),
                           ],
                         ),
                       ],
@@ -285,28 +320,41 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                         final slot = _timeSlots[index];
                         final isSelected = _selectedTimeSlot == slot;
 
-                        return InkWell(
-                          onTap: () {
-                            setState(() => _selectedTimeSlot = slot);
-                            widget.onDateTimeSelected(_selectedDate, _selectedTimeSlot);
-                          },
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: AppColors.surface,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isSelected ? AppColors.primaryRed : AppColors.border,
-                                width: isSelected ? 2 : 1,
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {
+                              setState(() => _selectedTimeSlot = slot);
+                              widget.onDateTimeSelected(_selectedDate, _selectedTimeSlot);
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: isSelected ? AppColors.surfaceHighlight : AppColors.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: isSelected ? AppColors.primaryRed : AppColors.border,
+                                  width: isSelected ? 1.5 : 1,
+                                ),
+                                boxShadow: isSelected
+                                    ? [
+                                        BoxShadow(
+                                          color: AppColors.primaryRed.withOpacity(0.12),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
                               ),
-                            ),
-                            child: Text(
-                              slot,
-                              style: TextStyle(
-                                color: isSelected ? AppColors.primaryRed : Colors.white,
-                                fontSize: 13,
-                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              child: Text(
+                                slot,
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: isSelected ? AppColors.primaryRed : Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
@@ -332,32 +380,49 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
                             decoration: BoxDecoration(
                               color: AppColors.surfaceElevated,
                               borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.borderSubtle),
                             ),
-                            child: const Icon(Icons.location_on_rounded, color: AppColors.primaryRed, size: 24),
+                            child: const Icon(Icons.location_on_rounded, color: AppColors.primaryRed, size: 22),
                           ),
                           const SizedBox(width: 14),
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Pickup Address', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 14)),
-                                SizedBox(height: 2),
-                                Text("We'll pickup from your location", style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                                Text('Exact address will be confirmed after order', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                                Text(
+                                  'Pickup Address',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  "We'll pickup from your location",
+                                  style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 12),
+                                ),
+                                Text(
+                                  'Exact address will be confirmed after order',
+                                  style: GoogleFonts.plusJakartaSans(color: AppColors.textMuted, fontSize: 11),
+                                ),
                               ],
                             ),
                           ),
-                          const Row(
+                          Row(
                             children: [
-                              Text('Change', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-                              Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 16),
+                              Text(
+                                'Change',
+                                style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 12),
+                              ),
+                              const Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 16),
                             ],
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
 
                     // Continue Button
                     FixlyCrimsonButton(
@@ -379,9 +444,12 @@ class _ChoosePickupTimeScreenState extends State<ChoosePickupTimeScreen> {
   Widget _buildBullet(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white70, size: 13),
+        Icon(icon, color: AppColors.primaryRed, size: 13),
         const SizedBox(width: 6),
-        Text(text, style: const TextStyle(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w500)),
+        Text(
+          text,
+          style: GoogleFonts.plusJakartaSans(color: Colors.white70, fontSize: 11, fontWeight: FontWeight.w500),
+        ),
       ],
     );
   }

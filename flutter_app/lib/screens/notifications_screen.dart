@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import '../widgets/custom_widgets.dart';
 
 class NotificationItem {
   final String id;
@@ -98,12 +100,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 
-  void _clearAll() {
-    setState(() {
-      _notifications.clear();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final unreadCount = _notifications.where((n) => !n.isRead).length;
@@ -125,17 +121,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  InkWell(
-                    onTap: widget.onBack,
-                    borderRadius: BorderRadius.circular(24),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: AppColors.surfaceElevated,
-                        shape: BoxShape.circle,
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: widget.onBack,
+                      borderRadius: BorderRadius.circular(22),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceElevated,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                       ),
-                      child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -143,9 +143,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Notifications',
-                          style: TextStyle(
+                          style: GoogleFonts.outfit(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -154,16 +154,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         if (unreadCount > 0)
                           Text(
                             '$unreadCount new update${unreadCount > 1 ? 's' : ''}',
-                            style: const TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                               color: AppColors.primaryRed,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
                           )
                         else
-                          const Text(
+                          Text(
                             'All caught up',
-                            style: TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                               color: AppColors.textSecondary,
                               fontSize: 12,
                             ),
@@ -174,9 +174,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   if (_notifications.isNotEmpty)
                     TextButton(
                       onPressed: _markAllAsRead,
-                      child: const Text(
+                      child: Text(
                         'Mark all read',
-                        style: TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           color: AppColors.primaryRed,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -192,6 +192,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
                 child: Row(
                   children: [
                     _buildFilterChip(0, 'All (${_notifications.length})'),
@@ -239,19 +240,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
+                          Text(
                             'No notifications here',
-                            style: TextStyle(
+                            style: GoogleFonts.outfit(
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
+                          Text(
                             'You will receive live repair updates and\nwarranty milestones here.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: GoogleFonts.plusJakartaSans(
                               color: AppColors.textSecondary,
                               fontSize: 12,
                               height: 1.4,
@@ -261,6 +262,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                     )
                   : ListView.separated(
+                      physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       itemCount: filteredList.length,
                       separatorBuilder: (context, index) => const SizedBox(height: 10),
@@ -278,24 +280,29 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildFilterChip(int index, String label) {
     final isSelected = _selectedFilter == index;
-    return InkWell(
-      onTap: () => setState(() => _selectedFilter = index),
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryRed : AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? AppColors.primaryRed : AppColors.border,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => setState(() => _selectedFilter = index),
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.surfaceHighlight : AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? AppColors.primaryRed : AppColors.border,
+              width: isSelected ? 1.5 : 1,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : AppColors.textSecondary,
-            fontSize: 12,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+          child: Text(
+            label,
+            style: GoogleFonts.plusJakartaSans(
+              color: isSelected ? Colors.white : AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            ),
           ),
         ),
       ),
@@ -303,127 +310,124 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildNotificationCard(NotificationItem item) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          item.isRead = true;
-        });
-        if (item.category == 'order') {
-          widget.onTrackOrder();
-        }
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: item.isRead ? AppColors.surface : AppColors.surfaceElevated,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: item.isRead ? AppColors.border : AppColors.primaryRed.withOpacity(0.4),
-            width: item.isRead ? 1 : 1.5,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            item.isRead = true;
+          });
+          if (item.category == 'order') {
+            widget.onTrackOrder();
+          }
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: item.isRead ? AppColors.surface : AppColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: item.isRead ? AppColors.border : AppColors.primaryRed.withOpacity(0.4),
+              width: item.isRead ? 1 : 1.5,
+            ),
+            boxShadow: !item.isRead
+                ? [
+                    BoxShadow(
+                      color: AppColors.primaryRed.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
-          boxShadow: !item.isRead
-              ? [
-                  BoxShadow(
-                    color: AppColors.primaryRed.withOpacity(0.06),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Icon
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: item.isRead ? AppColors.surfaceElevated : AppColors.redSubtle,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: item.isRead ? AppColors.borderSubtle : AppColors.primaryRed.withOpacity(0.3),
                   ),
-                ]
-              : null,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Icon
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: item.isRead ? AppColors.surface : AppColors.primaryRed.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: item.isRead ? AppColors.border : AppColors.primaryRed.withOpacity(0.3),
+                ),
+                child: Icon(
+                  item.icon,
+                  color: item.isRead ? Colors.white70 : AppColors.primaryRed,
+                  size: 20,
                 ),
               ),
-              child: Icon(
-                item.icon,
-                color: item.isRead ? Colors.white70 : AppColors.primaryRed,
-                size: 20,
-              ),
-            ),
-            const SizedBox(width: 12),
+              const SizedBox(width: 12),
 
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item.title,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: item.isRead ? FontWeight.w600 : FontWeight.w800,
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.title,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: item.isRead ? FontWeight.w600 : FontWeight.w800,
+                            ),
                           ),
                         ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            item.time,
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 11,
-                            ),
-                          ),
-                          if (!item.isRead) ...[
-                            const SizedBox(width: 6),
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: AppColors.primaryRed,
-                                shape: BoxShape.circle,
+                        Row(
+                          children: [
+                            Text(
+                              item.time,
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.textSecondary,
+                                fontSize: 11,
                               ),
                             ),
+                            if (!item.isRead) ...[
+                              const SizedBox(width: 6),
+                              const FixlyPulseDot(size: 7),
+                            ],
                           ],
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.message,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
-                      height: 1.35,
-                    ),
-                  ),
-                  if (item.actionLabel != null) ...[
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                          '${item.actionLabel} ›',
-                          style: const TextStyle(
-                            color: AppColors.primaryRed,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item.message,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                        height: 1.35,
+                      ),
+                    ),
+                    if (item.actionLabel != null) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Text(
+                            '${item.actionLabel} ›',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.primaryRed,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../widgets/custom_widgets.dart';
@@ -43,20 +44,26 @@ class BookingDetailsScreen extends StatelessWidget {
             // Scrollable Summary
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
+                    const SizedBox(height: 8),
+
                     // 1. Brand Card
                     _buildRowCard(
                       leading: Container(
-                        width: 36,
-                        height: 36,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: const Color(0xFFFF6900),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         alignment: Alignment.center,
-                        child: const Text('mi', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                        child: Text(
+                          brand?.logoText ?? 'mi',
+                          style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
                       ),
                       label: 'Brand',
                       value: brand?.name ?? 'Xiaomi',
@@ -66,13 +73,14 @@ class BookingDetailsScreen extends StatelessWidget {
                     // 2. Model Card
                     _buildRowCard(
                       leading: Container(
-                        width: 36,
-                        height: 36,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+                          color: AppColors.surfaceElevated,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.borderSubtle),
                         ),
-                        child: const Icon(Icons.phone_android_rounded, color: Colors.black87, size: 22),
+                        child: const Icon(Icons.phone_android_rounded, color: Colors.white, size: 20),
                       ),
                       label: 'Model',
                       value: model?.name ?? 'Xiaomi 11T Pro 5G',
@@ -82,13 +90,14 @@ class BookingDetailsScreen extends StatelessWidget {
                     // 3. Issue Card
                     _buildRowCard(
                       leading: Container(
-                        width: 36,
-                        height: 36,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceElevated,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.borderSubtle),
                         ),
-                        child: const Icon(Icons.broken_image_rounded, color: Colors.white, size: 20),
+                        child: const Icon(Icons.broken_image_rounded, color: AppColors.primaryRed, size: 20),
                       ),
                       label: 'Issue',
                       value: service?.title ?? 'Display Service',
@@ -99,27 +108,29 @@ class BookingDetailsScreen extends StatelessWidget {
                     // 4. Warranty Card
                     _buildRowCard(
                       leading: Container(
-                        width: 36,
-                        height: 36,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceElevated,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.borderSubtle),
                         ),
                         child: const Icon(Icons.shield_outlined, color: Colors.white, size: 20),
                       ),
                       label: 'Warranty',
-                      value: service?.warrantyText ?? '6 months',
+                      value: service?.warrantyText ?? '6 months warranty',
                       onChange: null,
                     ),
 
                     // 5. Pickup Time Card
                     _buildRowCard(
                       leading: Container(
-                        width: 36,
-                        height: 36,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceElevated,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.borderSubtle),
                         ),
                         child: const Icon(Icons.calendar_month_outlined, color: Colors.white, size: 20),
                       ),
@@ -131,98 +142,132 @@ class BookingDetailsScreen extends StatelessWidget {
                     // 6. Pickup Location Card
                     _buildRowCard(
                       leading: Container(
-                        width: 36,
-                        height: 36,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceElevated,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.borderSubtle),
                         ),
                         child: const Icon(Icons.location_on_rounded, color: AppColors.primaryRed, size: 20),
                       ),
                       label: 'Pickup Location',
-                      value: 'Home',
+                      value: 'Doorstep Pickup (Home)',
                       onChange: () => onJumpToStep(4),
                     ),
 
                     // 7. Total Amount & Payment Terms Card
                     Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(14),
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: AppColors.border),
                       ),
-                      child: Row(
+                      child: Column(
                         children: [
-                          Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceElevated,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(Icons.receipt_long_rounded, color: Colors.white, size: 20),
-                          ),
-                          const SizedBox(width: 14),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Total Amount', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '₹$total',
-                                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
+                          Row(
+                            children: [
+                              Container(
+                                width: 38,
+                                height: 38,
+                                decoration: BoxDecoration(
+                                  color: AppColors.redSubtle,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: AppColors.primaryRed.withOpacity(0.3)),
                                 ),
-                                const SizedBox(height: 2),
-                                const Text(
-                                  'Pay after the repair is done',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                                child: const Icon(Icons.receipt_long_rounded, color: AppColors.primaryRed, size: 20),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Total Amount',
+                                      style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '₹$total',
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.white,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Pay after the repair is done',
+                                      style: GoogleFonts.plusJakartaSans(color: AppColors.primaryRed, fontSize: 11, fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceElevated,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: AppColors.borderSubtle),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'COD / UPI',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: AppColors.border),
-                            ),
-                            child: const Row(
-                              children: [
-                                Text('View Details', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                                SizedBox(width: 2),
-                                Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 14),
-                              ],
-                            ),
-                          ),
+                          const SizedBox(height: 12),
+                          const Divider(color: AppColors.borderSubtle),
+                          const SizedBox(height: 10),
+                          _buildPriceLine('Estimated Repair Fee', '₹${service?.price ?? 4299}'),
+                          const SizedBox(height: 6),
+                          _buildPriceLine('Doorstep Pickup & Return', 'FREE', isHighlight: true),
+                          const SizedBox(height: 6),
+                          _buildPriceLine('Diagnostic & Safety Sanitization', '₹79'),
                         ],
                       ),
                     ),
 
                     // 8. Trust Banner
                     Container(
-                      margin: const EdgeInsets.only(bottom: 16),
+                      margin: const EdgeInsets.only(bottom: 20),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: AppColors.border),
                       ),
-                      child: const Row(
+                      child: Row(
                         children: [
-                          Icon(Icons.verified_user_rounded, color: Colors.white70, size: 20),
-                          SizedBox(width: 10),
+                          const Icon(Icons.verified_user_rounded, color: AppColors.primaryRed, size: 20),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Safe & Secure Service', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700)),
-                                SizedBox(height: 1),
+                                Text(
+                                  'Safe & Secure Service',
+                                  style: GoogleFonts.outfit(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 1),
                                 Text(
                                   'Verified pickup partner  ·  Live tracking  ·  Original parts',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 10),
+                                  style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 10),
                                 ),
                               ],
                             ),
@@ -251,6 +296,26 @@ class BookingDetailsScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildPriceLine(String label, String value, {bool isHighlight = false}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 12),
+        ),
+        Text(
+          value,
+          style: GoogleFonts.plusJakartaSans(
+            color: isHighlight ? AppColors.primaryRed : Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildRowCard({
     required Widget leading,
     required String label,
@@ -274,14 +339,21 @@ class BookingDetailsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                Text(
+                  label,
+                  style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary, fontSize: 11),
+                ),
                 const SizedBox(height: 2),
                 Row(
                   children: [
                     Flexible(
                       child: Text(
                         value,
-                        style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                        style: GoogleFonts.plusJakartaSans(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -289,12 +361,19 @@ class BookingDetailsScreen extends StatelessWidget {
                     if (hasLiveBadge) ...[
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                         decoration: BoxDecoration(
                           color: AppColors.primaryRed,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text('PRO', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900)),
+                        child: Text(
+                          'PRO',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
                       ),
                     ],
                   ],
@@ -303,14 +382,28 @@ class BookingDetailsScreen extends StatelessWidget {
             ),
           ),
           if (onChange != null)
-            InkWell(
-              onTap: onChange,
-              child: const Row(
-                children: [
-                  Text('Change', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w500)),
-                  SizedBox(width: 2),
-                  Icon(Icons.chevron_right, color: AppColors.textSecondary, size: 16),
-                ],
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onChange,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Change',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.primaryRed,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      const Icon(Icons.chevron_right, color: AppColors.primaryRed, size: 16),
+                    ],
+                  ),
+                ),
               ),
             ),
         ],
