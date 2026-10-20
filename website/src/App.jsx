@@ -128,41 +128,7 @@ export default function App() {
 
   return (
     <div className="website-root">
-      {/* 1. TOP ANNOUNCEMENT BAR */}
-      <div
-        style={{
-          backgroundColor: '#111',
-          borderBottom: '1px solid var(--border-subtle)',
-          padding: '8px 24px',
-          fontSize: '13px',
-          color: 'var(--text-muted)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', padding: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ color: 'var(--primary-red)', fontWeight: 700 }}>● LIVE IN PUNE, MUMBAI & BENGALURU</span>
-            <span style={{ color: '#444' }}>|</span>
-            <span>Flat ₹79 Doorstep Pickup & Drop · 100% Free Diagnosis · 30-Day Guarantee</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <a
-              href="https://wa.me/918000012345"
-              target="_blank"
-              rel="noreferrer"
-              style={{ color: '#FFF', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}
-            >
-              <MessageSquare size={14} color="#25D366" /> WhatsApp Support
-            </a>
-            <span style={{ color: '#444' }}>|</span>
-            <span style={{ color: 'var(--text-white)' }}>Helpline: <strong>+91 80000 12345</strong></span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. DESKTOP NAVIGATION BAR */}
+      {/* 1. DESKTOP NAVIGATION BAR */}
       <nav className="navbar-fixed">
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '76px' }}>
           {/* Brand Logo */}
@@ -212,13 +178,13 @@ export default function App() {
         </div>
       </nav>
 
-      {/* 3. HERO SECTION (DESKTOP 2-COLUMN SPLIT) */}
-      <section style={{ padding: '70px 0 90px', background: 'radial-gradient(ellipse at 50% 0%, rgba(255,43,66,0.12) 0%, transparent 60%)' }}>
+      {/* 2. HERO SECTION (DESKTOP 2-COLUMN SPLIT) */}
+      <section style={{ padding: '70px 0 90px', background: 'var(--bg-canvas)' }}>
         <div className="container" style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '60px', alignItems: 'center' }}>
           {/* Left Column: Value Prop */}
           <div>
             <div className="section-badge">
-              <Award size={14} /> Certified Smartphone Lab
+              <Award size={13} /> Certified Smartphone Lab
             </div>
             <h1 style={{ fontSize: '56px', fontWeight: 900, lineHeight: 1.1, marginBottom: '20px' }}>
               Professional Phone Repairs <br />
@@ -231,7 +197,7 @@ export default function App() {
             {/* 4 Trust Feature Tiles */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '36px' }}>
               <div style={{ backgroundColor: 'var(--bg-card)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-subtle)', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--primary-red-faint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-red)' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#1E1E22', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#E4E4E7' }}>
                   <Truck size={20} />
                 </div>
                 <div>
@@ -241,7 +207,7 @@ export default function App() {
               </div>
 
               <div style={{ backgroundColor: 'var(--bg-card)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-subtle)', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--primary-red-faint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-red)' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#1E1E22', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#E4E4E7' }}>
                   <Search size={20} />
                 </div>
                 <div>
@@ -251,7 +217,7 @@ export default function App() {
               </div>
 
               <div style={{ backgroundColor: 'var(--bg-card)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-subtle)', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--primary-red-faint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-red)' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#1E1E22', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#E4E4E7' }}>
                   <ShieldCheck size={20} />
                 </div>
                 <div>
@@ -261,7 +227,7 @@ export default function App() {
               </div>
 
               <div style={{ backgroundColor: 'var(--bg-card)', padding: '16px', borderRadius: '16px', border: '1px solid var(--border-subtle)', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: 'var(--primary-red-faint)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary-red)' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#1E1E22', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#E4E4E7' }}>
                   <CheckCircle2 size={20} />
                 </div>
                 <div>
@@ -284,13 +250,13 @@ export default function App() {
           </div>
 
           {/* Right Column: Instant Price Estimator Widget */}
-          <div id="estimator" className="glow-card" style={{ padding: '32px', border: '1.5px solid var(--primary-red-border)' }}>
+          <div id="estimator" className="glow-card" style={{ padding: '32px', border: '1px solid var(--border-subtle)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
               <div>
-                <span style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>INSTANT CALCULATOR</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>INSTANT CALCULATOR</span>
                 <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#FFF', marginTop: '2px' }}>Get Repair Estimate</h3>
               </div>
-              <div style={{ backgroundColor: 'rgba(255,43,66,0.15)', color: 'var(--primary-red)', border: '1px solid var(--primary-red-border)', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 800 }}>
+              <div style={{ backgroundColor: '#18181B', color: '#D4D4D8', border: '1px solid #27272A', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 700 }}>
                 TRANSPARENT PRICING
               </div>
             </div>
@@ -425,8 +391,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 4. SUPPORTED BRANDS MARQUEE / GRID */}
-      <section style={{ padding: '36px 0', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)', backgroundColor: '#111' }}>
+      {/* 3. SUPPORTED BRANDS MARQUEE / GRID */}
+      <section style={{ padding: '36px 0', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-canvas)' }}>
         <div className="container">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '30px', flexWrap: 'wrap' }}>
             <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
@@ -458,7 +424,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 5. REPAIR SERVICES GRID */}
+      {/* 4. REPAIR SERVICES GRID */}
       <section id="services" className="section-padding">
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
@@ -473,20 +439,20 @@ export default function App() {
             {SERVICES.map((s) => {
               const renderServiceIcon = () => {
                 switch (s.icon) {
-                  case 'Smartphone': return <Smartphone size={26} />;
-                  case 'BatteryCharging': return <BatteryCharging size={26} />;
-                  case 'Layers': return <Layers size={26} />;
-                  case 'Zap': return <Zap size={26} />;
-                  case 'Camera': return <Camera size={26} />;
-                  case 'Droplets': return <Droplets size={26} />;
-                  default: return <Smartphone size={26} />;
+                  case 'Smartphone': return <Smartphone size={24} />;
+                  case 'BatteryCharging': return <BatteryCharging size={24} />;
+                  case 'Layers': return <Layers size={24} />;
+                  case 'Zap': return <Zap size={24} />;
+                  case 'Camera': return <Camera size={24} />;
+                  case 'Droplets': return <Droplets size={24} />;
+                  default: return <Smartphone size={24} />;
                 }
               };
 
               return (
                 <div key={s.id} className="glow-card" style={{ padding: '28px', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '18px' }}>
-                    <div style={{ width: '54px', height: '54px', borderRadius: '14px', backgroundColor: 'var(--primary-red-faint)', color: 'var(--primary-red)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: '#1E1E22', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {renderServiceIcon()}
                     </div>
                     <div style={{ textAlign: 'right' }}>
@@ -499,10 +465,10 @@ export default function App() {
                   <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px', flex: 1 }}>{s.description}</p>
 
                   <div style={{ display: 'flex', gap: '8px', marginBottom: '18px' }}>
-                    <span style={{ backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: 'var(--primary-red)', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 700 }}>
+                    <span style={{ backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: '#D4D4D8', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600 }}>
                       🛡 {s.warranty} Warranty
                     </span>
-                    <span style={{ backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: '#FFF', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600 }}>
+                    <span style={{ backgroundColor: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', color: '#A1A1AA', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 600 }}>
                       ⚡ {s.turnaround} TAT
                     </span>
                   </div>
@@ -529,8 +495,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 6. HOW IT WORKS (4-STEP TIMELINE) */}
-      <section id="how-it-works" className="section-padding" style={{ backgroundColor: '#111', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+      {/* 5. HOW IT WORKS (4-STEP TIMELINE) */}
+      <section id="how-it-works" className="section-padding" style={{ backgroundColor: 'var(--bg-canvas)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <div className="section-badge">HASSLE-FREE PROCESS</div>
@@ -543,22 +509,22 @@ export default function App() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', position: 'relative' }}>
             {HOW_IT_WORKS.map((h, idx) => (
               <div key={idx} className="glow-card" style={{ padding: '28px', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ fontSize: '48px', fontWeight: 900, color: 'rgba(255,255,255,0.06)', position: 'absolute', top: '10px', right: '16px' }}>
+                <div style={{ fontSize: '48px', fontWeight: 900, color: 'rgba(255,255,255,0.04)', position: 'absolute', top: '10px', right: '16px' }}>
                   {h.step}
                 </div>
 
-                <div style={{ width: '46px', height: '46px', borderRadius: '12px', backgroundColor: 'var(--primary-red-faint)', color: 'var(--primary-red)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
-                  {idx === 0 && <Truck size={22} />}
-                  {idx === 1 && <Search size={22} />}
-                  {idx === 2 && <Receipt size={22} />}
-                  {idx === 3 && <ShieldCheck size={22} />}
+                <div style={{ width: '44px', height: '44px', borderRadius: '12px', backgroundColor: '#1E1E22', color: '#FFF', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                  {idx === 0 && <Truck size={20} />}
+                  {idx === 1 && <Search size={20} />}
+                  {idx === 2 && <Receipt size={20} />}
+                  {idx === 3 && <ShieldCheck size={20} />}
                 </div>
 
-                <div style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '4px' }}>
+                <div style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '4px' }}>
                   STEP {h.step}
                 </div>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#FFF', marginBottom: '4px' }}>{h.title}</h3>
-                <div style={{ color: '#EEE', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>{h.subtitle}</div>
+                <div style={{ color: '#A1A1AA', fontSize: '12px', fontWeight: 600, marginBottom: '12px' }}>{h.subtitle}</div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: 1.5 }}>{h.desc}</p>
               </div>
             ))}
@@ -633,7 +599,7 @@ export default function App() {
 
             {/* Tracking Result Card */}
             {trackedOrder && (
-              <div className="glow-card animate-fade-in" style={{ padding: '32px', border: '1.5px solid var(--primary-red-border)' }}>
+              <div className="glow-card animate-fade-in" style={{ padding: '32px', border: '1px solid var(--border-subtle)' }}>
                 {/* Order Top Bar */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px', marginBottom: '24px' }}>
                   <div>
@@ -642,7 +608,7 @@ export default function App() {
                     <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Issue: {trackedOrder.issue}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ backgroundColor: 'rgba(255,43,66,0.15)', color: 'var(--primary-red)', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 800, display: 'inline-block' }}>
+                    <div style={{ backgroundColor: '#1E1E22', color: '#D4D4D8', border: '1px solid #27272A', padding: '6px 14px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, display: 'inline-block' }}>
                       {trackedOrder.status}
                     </div>
                     <div style={{ fontSize: '20px', fontWeight: 900, color: '#FFF', marginTop: '6px' }}>{trackedOrder.amount}</div>
@@ -660,14 +626,13 @@ export default function App() {
                         <div key={sIdx} style={{ textAlign: 'center' }}>
                           <div
                             style={{
-                              height: '6px',
+                              height: '5px',
                               borderRadius: '3px',
                               backgroundColor: isComplete || isCurrent ? 'var(--primary-red)' : 'var(--border-subtle)',
-                              boxShadow: isCurrent ? '0 0 10px var(--primary-red)' : 'none',
                               marginBottom: '8px'
                             }}
                           />
-                          <div style={{ fontSize: '11px', fontWeight: isCurrent ? 800 : 500, color: isCurrent ? 'var(--primary-red)' : isComplete ? '#FFF' : 'var(--text-muted)' }}>
+                          <div style={{ fontSize: '11px', fontWeight: isCurrent ? 700 : 500, color: isCurrent ? 'var(--primary-red)' : isComplete ? '#FFF' : 'var(--text-muted)' }}>
                             {stage}
                           </div>
                         </div>
@@ -700,7 +665,7 @@ export default function App() {
                     <p style={{ color: '#EEE', fontSize: '12px', lineHeight: 1.4, margin: 0 }}>
                       "{trackedOrder.diagnosisNotes}"
                     </p>
-                    <div style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 700, marginTop: '6px' }}>
+                    <div style={{ color: '#D4D4D8', fontSize: '11px', fontWeight: 600, marginTop: '6px' }}>
                       ✔ {trackedOrder.warranty}
                     </div>
                   </div>
@@ -710,7 +675,7 @@ export default function App() {
 
             {trackingError && (
               <div style={{ backgroundColor: 'var(--bg-card)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-subtle)', textAlign: 'center' }}>
-                <HelpCircle size={32} color="var(--primary-red)" style={{ marginBottom: '8px' }} />
+                <HelpCircle size={32} color="var(--text-muted)" style={{ marginBottom: '8px' }} />
                 <div style={{ color: '#FFF', fontSize: '16px', fontWeight: 700 }}>No Order Found for "{trackingQuery}"</div>
                 <div style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>
                   Please check the order ID sent to your SMS/WhatsApp or click the demo buttons above.
@@ -721,8 +686,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 8. 30-DAY GUARANTEE & TRANSPARENCY SECTION */}
-      <section id="warranty" className="section-padding" style={{ backgroundColor: '#111', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
+      {/* 6. 30-DAY GUARANTEE & TRANSPARENCY SECTION */}
+      <section id="warranty" className="section-padding" style={{ backgroundColor: 'var(--bg-canvas)', borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
         <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'center' }}>
           <div>
             <div className="section-badge">IRONCLAD PROTECTION</div>
@@ -733,7 +698,7 @@ export default function App() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '32px' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <CheckCircle2 size={20} color="var(--primary-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <CheckCircle2 size={18} color="var(--primary-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <div>
                   <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700 }}>100% Free Doorstep Re-Pickup</div>
                   <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>No logistics charge or inspection fee on any valid warranty claim.</div>
@@ -741,7 +706,7 @@ export default function App() {
               </div>
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <CheckCircle2 size={20} color="var(--primary-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <CheckCircle2 size={18} color="var(--primary-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <div>
                   <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700 }}>24-Point Hardware Quality Scorecard</div>
                   <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Every repaired device is benchmarked for thermal load, touch sampling rate, and fast charging.</div>
@@ -749,7 +714,7 @@ export default function App() {
               </div>
 
               <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <CheckCircle2 size={20} color="var(--primary-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
+                <CheckCircle2 size={18} color="var(--primary-red)" style={{ marginTop: '2px', flexShrink: 0 }} />
                 <div>
                   <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700 }}>Transparent Itemized Billing</div>
                   <div style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Never pay hidden charges. You receive a verified GST invoice on WhatsApp with component serial numbers.</div>
@@ -771,17 +736,16 @@ export default function App() {
           <div style={{ position: 'relative' }}>
             <div
               style={{
-                background: 'linear-gradient(135deg, rgba(255,43,66,0.18) 0%, var(--bg-card) 100%)',
+                backgroundColor: 'var(--bg-card)',
                 borderRadius: '24px',
                 padding: '40px',
-                border: '1.5px solid var(--primary-red-border)',
-                boxShadow: 'var(--shadow-red)'
+                border: '1px solid var(--border-subtle)'
               }}
             >
-              <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: 'var(--primary-red)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', marginBottom: '20px' }}>
-                <Shield size={32} />
+              <div style={{ width: '56px', height: '56px', borderRadius: '14px', backgroundColor: '#1E1E22', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', marginBottom: '20px' }}>
+                <Shield size={28} />
               </div>
-              <h3 style={{ fontSize: '28px', fontWeight: 900, color: '#FFF', marginBottom: '10px' }}>
+              <h3 style={{ fontSize: '26px', fontWeight: 900, color: '#FFF', marginBottom: '10px' }}>
                 Zero Risk. <br />Pay Only When Satisfied.
               </h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.6, marginBottom: '24px' }}>
@@ -790,7 +754,7 @@ export default function App() {
               <div style={{ backgroundColor: 'var(--bg-canvas)', borderRadius: '12px', padding: '16px', border: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>GUARANTEED WARRANTY</div>
-                  <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary-red)' }}>30 Days Full Coverage</div>
+                  <div style={{ fontSize: '18px', fontWeight: 800, color: '#FFF' }}>30 Days Full Coverage</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>DIAGNOSIS CHARGE</div>
@@ -839,8 +803,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 10. FAQS */}
-      <section id="faq" className="section-padding" style={{ backgroundColor: '#111', borderTop: '1px solid var(--border-subtle)' }}>
+      {/* 8. FAQS */}
+      <section id="faq" className="section-padding" style={{ backgroundColor: 'var(--bg-canvas)', borderTop: '1px solid var(--border-subtle)' }}>
         <div className="container" style={{ maxWidth: '800px' }}>
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
             <div className="section-badge">FREQUENTLY ASKED QUESTIONS</div>
@@ -894,8 +858,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 11. DESKTOP FOOTER */}
-      <footer style={{ backgroundColor: '#090909', borderTop: '1px solid var(--border-subtle)', padding: '60px 0 30px' }}>
+      {/* 9. DESKTOP FOOTER */}
+      <footer style={{ backgroundColor: 'var(--bg-canvas)', borderTop: '1px solid var(--border-subtle)', padding: '60px 0 30px' }}>
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1.2fr', gap: '48px', marginBottom: '48px' }}>
             <div>

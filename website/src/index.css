@@ -3,22 +3,22 @@
 :root {
   --primary-red: #FF2B42;
   --primary-red-hover: #E61930;
-  --primary-red-glow: rgba(255, 43, 66, 0.25);
-  --primary-red-faint: rgba(255, 43, 66, 0.08);
-  --primary-red-border: rgba(255, 43, 66, 0.35);
+  --primary-red-glow: rgba(255, 43, 66, 0.12);
+  --primary-red-faint: rgba(255, 255, 255, 0.04);
+  --primary-red-border: rgba(255, 43, 66, 0.25);
 
-  --bg-canvas: #0D0D0D;
-  --bg-card: #161616;
-  --bg-card-hover: #1A1A1A;
-  --bg-elevated: #222222;
-  --bg-glass: rgba(13, 13, 13, 0.85);
+  --bg-canvas: #09090B;
+  --bg-card: #121214;
+  --bg-card-hover: #18181B;
+  --bg-elevated: #18181B;
+  --bg-glass: rgba(9, 9, 11, 0.88);
 
-  --border-subtle: #242424;
-  --border-light: #2E2E2E;
+  --border-subtle: #222225;
+  --border-light: #2E2E33;
 
   --text-white: #FFFFFF;
-  --text-muted: #8E8E93;
-  --text-dim: #5C5C60;
+  --text-muted: #9CA3AF;
+  --text-dim: #6B7280;
 
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -29,8 +29,8 @@
   --radius-xl: 28px;
   --radius-pill: 9999px;
 
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-red: 0 8px 30px rgba(255, 43, 66, 0.28);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-red: 0 4px 16px rgba(255, 43, 66, 0.2);
 }
 
 * {
@@ -92,11 +92,11 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  background-color: var(--primary-red-faint);
-  border: 1px solid var(--primary-red-border);
-  color: var(--primary-red);
+  background-color: #18181B;
+  border: 1px solid #27272A;
+  color: #D4D4D8;
   border-radius: var(--radius-pill);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
