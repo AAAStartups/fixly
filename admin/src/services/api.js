@@ -2,7 +2,7 @@
 // Direct integration with NestJS Admin Endpoints
 
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
+  import.meta.env.VITE_API_BASE_URL || 'https://fixly-backend-kd8o.onrender.com/api/v1';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;

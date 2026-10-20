@@ -8,17 +8,12 @@ class ApiService {
   factory ApiService() => _instance;
   ApiService._internal();
 
-  // Dynamic base URL:
-  // - Android Emulator: 10.0.2.2:3000
-  // - iOS Simulator / Desktop / Web: localhost:3000
+  // Production Render Cloud Backend URL:
+  // Accessible from real physical devices, emulators, and anywhere globally
+  static const String liveCloudUrl = 'https://fixly-backend-kd8o.onrender.com/api/v1';
+
   String get baseUrl {
-    if (kIsWeb) {
-      return 'http://localhost:3000/api/v1';
-    }
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:3000/api/v1';
-    }
-    return 'http://localhost:3000/api/v1';
+    return liveCloudUrl;
   }
 
   // Fast connection timeout to avoid blocking UI when backend is offline
