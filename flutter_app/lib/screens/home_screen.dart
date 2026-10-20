@@ -5,11 +5,15 @@ import '../widgets/custom_widgets.dart';
 class HomeScreen extends StatelessWidget {
   final VoidCallback onStartBooking;
   final Function(String issueTitle) onSelectIssue;
+  final VoidCallback onOpenNotifications;
+  final int unreadCount;
 
   const HomeScreen({
     super.key,
     required this.onStartBooking,
     required this.onSelectIssue,
+    required this.onOpenNotifications,
+    this.unreadCount = 3,
   });
 
   @override
@@ -51,30 +55,35 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: AppColors.surfaceElevated,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 22),
-                          Positioned(
-                            top: 10,
-                            right: 12,
-                            child: Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: AppColors.primaryRed,
-                                shape: BoxShape.circle,
+                    InkWell(
+                      onTap: onOpenNotifications,
+                      borderRadius: BorderRadius.circular(22),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: const BoxDecoration(
+                          color: AppColors.surfaceElevated,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 22),
+                            if (unreadCount > 0)
+                              Positioned(
+                                top: 10,
+                                right: 12,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primaryRed,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],

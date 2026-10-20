@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fixly_mobile/main.dart';
 
@@ -29,6 +30,18 @@ void main() {
 
     // Tap Home tab back
     await tester.tap(find.text('Home'));
+    await tester.pumpAndSettle();
+    expect(find.text('Select Phone Model'), findsOneWidget);
+
+    // Tap Notifications Bell
+    await tester.tap(find.byIcon(Icons.notifications_none_rounded));
+    await tester.pumpAndSettle();
+    expect(find.text('Notifications'), findsOneWidget);
+    expect(find.text('Device Received at Central Lab'), findsOneWidget);
+    expect(find.text('Mark all read'), findsOneWidget);
+
+    // Tap back from notifications
+    await tester.tap(find.byIcon(Icons.arrow_back));
     await tester.pumpAndSettle();
     expect(find.text('Select Phone Model'), findsOneWidget);
   });

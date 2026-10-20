@@ -91,6 +91,7 @@ export default function App() {
           {step === 0 && activeTab === 0 && (
             <HomeScreen
               onStartBooking={() => setStep(1)}
+              onOpenNotifications={() => setStep(7)}
               onSelectIssueCategory={(cat) => {
                 const found = SERVICES.find((s) => s.id === cat) || SERVICES[0];
                 setSelectedService(found);
@@ -190,6 +191,13 @@ export default function App() {
               }}
             />
           )}
+
+          {step === 7 && (
+            <NotificationsScreen
+              onBack={() => setStep(0)}
+              onTrackOrder={() => setStep(6)}
+            />
+          )}
         </div>
 
         {/* Global Bottom Navigation (3 buttons: Home, Booking, Dashboard) */}
@@ -214,6 +222,7 @@ export default function App() {
           { label: 'Home', s: 0, tab: 0, title: 'Home' },
           { label: 'Bookings', s: 0, tab: 1, title: 'Bookings Tab' },
           { label: 'Dashboard', s: 0, tab: 2, title: 'Dashboard Tab' },
+          { label: 'Notifs', s: 7, title: 'Notifications' },
           { label: 'S1 Brand', s: 1, title: 'Brand' },
           { label: 'S2 Model', s: 2, title: 'Model' },
           { label: 'S3 Service', s: 3, title: 'Service' },
@@ -244,7 +253,7 @@ export default function App() {
 // ----------------------------------------------------
 // 1. SCREEN 1: HOME SCREEN
 // ----------------------------------------------------
-function HomeScreen({ onStartBooking, onSelectIssueCategory }) {
+function HomeScreen({ onStartBooking, onSelectIssueCategory, onOpenNotifications }) {
   return (
     <div className="animate-fade-in" style={{ padding: '0 0 16px' }}>
       {/* Top Header */}
@@ -254,6 +263,7 @@ function HomeScreen({ onStartBooking, onSelectIssueCategory }) {
           <span style={{ color: 'var(--primary-red)' }}>LY</span>
         </div>
         <div
+          onClick={onOpenNotifications}
           style={{
             width: '42px',
             height: '42px',
@@ -2266,4 +2276,214 @@ function renderIcon(iconName, size = 20) {
     default:
       return <Smartphone size={size} />;
   }
+}
+
+// ----------------------------------------------------
+// NOTIFICATIONS SCREEN
+// ----------------------------------------------------
+function NotificationsScreen({ onBack, onTrackOrder }) {
+  const [filter, setFilter] = useState(0); // 0 = all, 1 = order, 2 = warranty, 3 = offer
+  const [items, setItems] = useState([
+    {
+      id: 1,
+      title: 'Device Received at Central Lab',
+      message: 'Your Xiaomi 11T Pro 5G (#QF-2026-0042) has arrived at the lab. Technician diagnosis is underway.',
+      time: '12m ago',
+      category: 'order',
+      icon: Clock,
+      isRead: false,
+      action: 'Track Repair'
+    },
+    {
+      id: 2,
+      title: 'Pickup Partner Assigned',
+      message: 'Rider Rohit Sharma (+91 98765 12340) is dispatched to collect your device at 10:00 AM.',
+      time: '2h ago',
+      category: 'order',
+      icon: Truck,
+      isRead: false,
+      action: 'Track Order'
+    },
+    {
+      id: 3,
+      title: '30-Day Warranty Protection Active',
+      message: 'Your iPhone 13 OEM Battery repair warranty has 14 days remaining. Zero-deductible replacement.',
+      time: '1d ago',
+      category: 'warranty',
+      icon: Shield,
+      isRead: false,
+      action: 'View Warranty'
+    },
+    {
+      id: 4,
+      title: 'Weekend Flat ₹150 OFF',
+      message: 'Get instant ₹150 discount on any Screen or Back Glass repair. Use coupon FIX150 before Sunday.',
+      time: '3d ago',
+      category: 'offer',
+      icon: Sparkles,
+      isRead: true,
+      action: 'Book Now'
+    }
+  ]);
+
+  const markAllAsRead = () => {
+    setItems((prev) => prev.map((item) => ({ ...item, isRead: true })));
+  };
+
+  const filtered = items.filter((it) => {
+    if (filter === 1) return it.category === 'order';
+    if (filter === 2) return it.category === 'warranty';
+    if (filter === 3) return it.category === 'offer';
+    return true;
+  });
+
+  const unreadCount = items.filter((it) => !it.isRead).length;
+
+  return (
+    <div className="animate-fade-in" style={{ padding: '16px 16px 30px' }}>
+      {/* Top Bar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+        <button
+          onClick={onBack}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            backgroundColor: 'var(--bg-card)',
+            border: '1px solid var(--border-subtle)',
+            color: '#FFF',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer'
+          }}
+        >
+          <ArrowLeft size={18} />
+        </button>
+        <div style={{ flex: 1 }}>
+          <div style={{ color: '#FFF', fontSize: '18px', fontWeight: 800 }}>Notifications</div>
+          <div style={{ color: unreadCount > 0 ? 'var(--primary-red)' : 'var(--text-gray)', fontSize: '12px', fontWeight: 600 }}>
+            {unreadCount > 0 ? `${unreadCount} new update${unreadCount > 1 ? 's' : ''}` : 'All caught up'}
+          </div>
+        </div>
+        {unreadCount > 0 && (
+          <button
+            onClick={markAllAsRead}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--primary-red)',
+              fontSize: '12px',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+          >
+            Mark all read
+          </button>
+        )}
+      </div>
+
+      {/* Filter Tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', overflowX: 'auto', paddingBottom: '4px' }}>
+        {['All', 'Orders', 'Warranty', 'Offers'].map((lbl, idx) => {
+          const isSelected = filter === idx;
+          return (
+            <button
+              key={idx}
+              onClick={() => setFilter(idx)}
+              style={{
+                backgroundColor: isSelected ? 'var(--primary-red)' : 'var(--bg-card)',
+                color: isSelected ? '#FFF' : 'var(--text-gray)',
+                border: `1px solid ${isSelected ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
+                borderRadius: '18px',
+                padding: '6px 14px',
+                fontSize: '12px',
+                fontWeight: isSelected ? 700 : 500,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {lbl}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Notification List */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {filtered.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div
+              key={item.id}
+              onClick={() => {
+                setItems((prev) =>
+                  prev.map((it) => (it.id === item.id ? { ...it, isRead: true } : it))
+                );
+                if (item.category === 'order') {
+                  onTrackOrder();
+                }
+              }}
+              style={{
+                backgroundColor: item.isRead ? 'var(--bg-card)' : '#1C1C1E',
+                borderRadius: '14px',
+                padding: '14px',
+                border: `1px solid ${item.isRead ? 'var(--border-subtle)' : 'rgba(255,43,66,0.4)'}`,
+                display: 'flex',
+                gap: '12px',
+                cursor: 'pointer'
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  backgroundColor: item.isRead ? '#242426' : 'rgba(255,43,66,0.15)',
+                  border: `1px solid ${item.isRead ? 'var(--border-subtle)' : 'rgba(255,43,66,0.3)'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: item.isRead ? '#FFF' : 'var(--primary-red)'
+                }}
+              >
+                <Icon size={18} />
+              </div>
+
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ color: '#FFF', fontSize: '13px', fontWeight: item.isRead ? 600 : 800 }}>
+                    {item.title}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ color: 'var(--text-gray)', fontSize: '11px' }}>{item.time}</span>
+                    {!item.isRead && (
+                      <div
+                        style={{
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '50%',
+                          backgroundColor: 'var(--primary-red)'
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div style={{ color: 'var(--text-gray)', fontSize: '12px', marginTop: '4px', lineHeight: 1.35 }}>
+                  {item.message}
+                </div>
+
+                {item.action && (
+                  <div style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 700, marginTop: '8px' }}>
+                    {item.action} ›
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }

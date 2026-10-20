@@ -9,6 +9,7 @@ import 'widgets/custom_widgets.dart';
 import 'screens/home_screen.dart';
 import 'screens/bookings_tab_screen.dart';
 import 'screens/dashboard_tab_screen.dart';
+import 'screens/notifications_screen.dart';
 import 'screens/select_brand_screen.dart';
 import 'screens/select_model_screen.dart';
 import 'screens/select_service_screen.dart';
@@ -147,6 +148,12 @@ class _MainAppControllerState extends State<MainAppController> {
             }),
           );
 
+        case 7:
+          return NotificationsScreen(
+            onBack: () => setState(() => _wizardStep = 0),
+            onTrackOrder: () => setState(() => _wizardStep = 6),
+          );
+
         default:
           return _buildTabScreen();
       }
@@ -165,6 +172,7 @@ class _MainAppControllerState extends State<MainAppController> {
               _wizardStep = 1;
             });
           },
+          onOpenNotifications: () => setState(() => _wizardStep = 7),
         );
 
       case 1:
@@ -183,6 +191,7 @@ class _MainAppControllerState extends State<MainAppController> {
         return HomeScreen(
           onStartBooking: () => setState(() => _wizardStep = 1),
           onSelectIssue: (issue) => setState(() => _wizardStep = 1),
+          onOpenNotifications: () => setState(() => _wizardStep = 7),
         );
     }
   }
