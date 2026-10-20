@@ -27,7 +27,12 @@ import {
   Droplets,
   Camera,
   RotateCcw,
-  Sparkles
+  Sparkles,
+  Home as HomeIcon,
+  Plus,
+  Award,
+  Headphones,
+  FileText
 } from 'lucide-react';
 import {
   BRANDS,
@@ -83,7 +88,7 @@ export default function App() {
 
         {/* Screen Content Body */}
         <div className="screen-content">
-          {step === 0 && (
+          {step === 0 && activeTab === 0 && (
             <HomeScreen
               onStartBooking={() => setStep(1)}
               onSelectIssueCategory={(cat) => {
@@ -91,6 +96,20 @@ export default function App() {
                 setSelectedService(found);
                 setStep(1);
               }}
+            />
+          )}
+
+          {step === 0 && activeTab === 1 && (
+            <BookingsScreen
+              onStartNewBooking={() => setStep(1)}
+              onTrackOrder={() => setStep(6)}
+            />
+          )}
+
+          {step === 0 && activeTab === 2 && (
+            <DashboardScreen
+              onStartNewBooking={() => setStep(1)}
+              onGoToBookings={() => setActiveTab(1)}
             />
           )}
 
@@ -173,13 +192,12 @@ export default function App() {
           )}
         </div>
 
-        {/* Global Bottom Navigation (Shown on Home or selectable) */}
+        {/* Global Bottom Navigation (3 buttons: Home, Booking, Dashboard) */}
         {step === 0 && (
           <BottomNav
             activeTab={activeTab}
             onChangeTab={(idx) => {
               setActiveTab(idx);
-              if (idx === 1) setStep(1);
             }}
           />
         )}
@@ -193,23 +211,31 @@ export default function App() {
       {/* Discreet floating screen switcher */}
       <div className="floating-step-pill">
         {[
-          { label: 'S1', s: 0, title: 'Home' },
-          { label: 'S2', s: 1, title: 'Brand' },
-          { label: 'S3', s: 2, title: 'Model' },
-          { label: 'S4', s: 3, title: 'Service' },
-          { label: 'S5', s: 4, title: 'Pickup' },
-          { label: 'S6', s: 5, title: 'Review' },
-          { label: 'S7', s: 6, title: 'Live' }
-        ].map((item) => (
-          <button
-            key={item.s}
-            title={item.title}
-            onClick={() => setStep(item.s)}
-            className={`step-chip ${step === item.s ? 'active' : ''}`}
-          >
-            {item.label}
-          </button>
-        ))}
+          { label: 'Home', s: 0, tab: 0, title: 'Home' },
+          { label: 'Bookings', s: 0, tab: 1, title: 'Bookings Tab' },
+          { label: 'Dashboard', s: 0, tab: 2, title: 'Dashboard Tab' },
+          { label: 'S1 Brand', s: 1, title: 'Brand' },
+          { label: 'S2 Model', s: 2, title: 'Model' },
+          { label: 'S3 Service', s: 3, title: 'Service' },
+          { label: 'S4 Pickup', s: 4, title: 'Pickup' },
+          { label: 'S5 Review', s: 5, title: 'Review' },
+          { label: 'S6 Track', s: 6, title: 'Tracking' }
+        ].map((item, idx) => {
+          const isActive = step === item.s && (item.tab === undefined || activeTab === item.tab);
+          return (
+            <button
+              key={idx}
+              title={item.title}
+              onClick={() => {
+                setStep(item.s);
+                if (item.tab !== undefined) setActiveTab(item.tab);
+              }}
+              className={`step-chip ${isActive ? 'active' : ''}`}
+            >
+              {item.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -1721,9 +1747,8 @@ function StickyCart({ line1, line2, buttonLabel, onAction }) {
 
 function BottomNav({ activeTab, onChangeTab }) {
   const tabs = [
-    { label: 'Home', icon: LayoutGrid },
+    { label: 'Home', icon: HomeIcon },
     { label: 'Booking', icon: Truck },
-    { label: 'Live', icon: Video, liveDot: true },
     { label: 'Dashboard', icon: LayoutGrid }
   ];
 
@@ -1755,28 +1780,415 @@ function BottomNav({ activeTab, onChangeTab }) {
               cursor: 'pointer'
             }}
           >
-            <div style={{ position: 'relative' }}>
-              <Icon size={22} color={color} />
-              {t.liveDot && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '-2px',
-                    right: '-2px',
-                    width: '6px',
-                    height: '6px',
-                    backgroundColor: 'var(--primary-red)',
-                    borderRadius: '50%'
-                  }}
-                />
-              )}
-            </div>
+            <Icon size={22} color={color} />
             <span style={{ fontSize: '11px', fontWeight: isSelected ? 800 : 500, color }}>
               {t.label}
             </span>
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// ----------------------------------------------------
+// BOOKINGS SCREEN
+// ----------------------------------------------------
+function BookingsScreen({ onStartNewBooking, onTrackOrder }) {
+  const [filter, setFilter] = useState(0); // 0 = all, 1 = active, 2 = past
+
+  return (
+    <div className="animate-fade-in" style={{ padding: '16px 16px 30px' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+        <div>
+          <div style={{ color: 'var(--text-gray)', fontSize: '11px', fontWeight: 700, letterSpacing: '1px' }}>MY REPAIRS</div>
+          <div style={{ fontSize: '24px', fontWeight: 900 }}>
+            <span>Fixly </span>
+            <span style={{ color: 'var(--primary-red)' }}>Bookings</span>
+          </div>
+        </div>
+        <button
+          onClick={onStartNewBooking}
+          style={{
+            backgroundColor: 'var(--primary-red)',
+            color: '#FFF',
+            border: 'none',
+            borderRadius: '20px',
+            padding: '8px 14px',
+            fontSize: '12px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px var(--primary-red-glow)'
+          }}
+        >
+          <Plus size={15} /> New Repair
+        </button>
+      </div>
+
+      {/* Filter Chips */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+        {['All Repairs (3)', 'Active (1)', 'Completed (2)'].map((lbl, idx) => (
+          <button
+            key={idx}
+            onClick={() => setFilter(idx)}
+            style={{
+              backgroundColor: filter === idx ? 'var(--primary-red)' : 'var(--bg-card)',
+              color: filter === idx ? '#FFF' : 'var(--text-gray)',
+              border: `1px solid ${filter === idx ? 'var(--primary-red)' : 'var(--border-subtle)'}`,
+              borderRadius: '20px',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: filter === idx ? 700 : 500,
+              cursor: 'pointer'
+            }}
+          >
+            {lbl}
+          </button>
+        ))}
+      </div>
+
+      {/* Active Order Card */}
+      {(filter === 0 || filter === 1) && (
+        <div style={{ marginBottom: '22px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <span style={{ color: '#FFF', fontSize: '15px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Clock size={16} color="var(--primary-red)" /> Active Repair
+            </span>
+            <span style={{ backgroundColor: 'rgba(255,43,66,0.15)', color: 'var(--primary-red)', border: '1px solid rgba(255,43,66,0.4)', borderRadius: '6px', fontSize: '10px', fontWeight: 800, padding: '3px 8px' }}>
+              IN LAB
+            </span>
+          </div>
+
+          <div
+            style={{
+              backgroundColor: 'var(--bg-card)',
+              borderRadius: '16px',
+              border: '1.5px solid rgba(255, 43, 66, 0.4)',
+              overflow: 'hidden'
+            }}
+          >
+            <div style={{ padding: '14px', display: 'flex', gap: '12px' }}>
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  backgroundColor: '#FFF',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Smartphone size={26} color="#111" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--primary-red)', fontSize: '12px', fontWeight: 700 }}>#QF-2026-0042</span>
+                  <span style={{ color: '#FFF', fontSize: '16px', fontWeight: 800 }}>₹4,378</span>
+                </div>
+                <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700, marginTop: '2px' }}>Xiaomi 11T Pro 5G</div>
+                <div style={{ color: 'var(--text-gray)', fontSize: '12px' }}>Display Replacement (OEM)</div>
+              </div>
+            </div>
+
+            {/* Stage Progress */}
+            <div style={{ backgroundColor: '#1A1A1A', padding: '10px 14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', marginBottom: '6px' }}>
+                <span style={{ color: '#FFF', fontWeight: 600 }}>Stage 2 of 5: Device Received</span>
+                <span style={{ color: 'var(--text-gray)' }}>Technician Diagnosis</span>
+              </div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[0, 1, 2, 3, 4].map((s) => (
+                  <div
+                    key={s}
+                    style={{
+                      flex: 1,
+                      height: '4px',
+                      borderRadius: '2px',
+                      backgroundColor: s <= 1 ? 'var(--primary-red)' : 'var(--border-subtle)',
+                      boxShadow: s === 1 ? '0 0 6px var(--primary-red)' : 'none'
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div style={{ padding: '10px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', color: 'var(--text-gray)' }}>
+              <span>Pickup: 10:00 AM, 19 Oct</span>
+              <span style={{ color: '#EEE', backgroundColor: '#222', padding: '2px 6px', borderRadius: '4px' }}>Pay After Repair</span>
+            </div>
+
+            <div style={{ padding: '10px 14px 14px' }}>
+              <button
+                onClick={onTrackOrder}
+                style={{
+                  width: '100%',
+                  height: '40px',
+                  backgroundColor: 'var(--primary-red)',
+                  color: '#FFF',
+                  border: 'none',
+                  borderRadius: '20px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                Track Repair Details <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Past Orders */}
+      {(filter === 0 || filter === 2) && (
+        <div style={{ marginBottom: '22px' }}>
+          <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700, marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <RotateCcw size={16} color="var(--text-gray)" /> Past Service History
+          </div>
+
+          <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '14px', padding: '14px', border: '1px solid var(--border-subtle)', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-gray)' }}>
+              <span>#QF-2025-9812</span>
+              <span style={{ color: '#FFF', backgroundColor: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 700 }}>DELIVERED</span>
+            </div>
+            <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700, marginTop: '6px' }}>iPhone 13 128GB</div>
+            <div style={{ color: 'var(--text-gray)', fontSize: '12px' }}>Battery Replacement (OEM) • Paid ₹2,328</div>
+            <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: '10px', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: 'var(--primary-red)', fontSize: '11px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Shield size={12} /> 14 days warranty remaining
+              </span>
+              <span style={{ color: 'var(--primary-red)', fontSize: '12px', fontWeight: 700, cursor: 'pointer' }}>Claim Warranty ›</span>
+            </div>
+          </div>
+
+          <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '14px', padding: '14px', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-gray)' }}>
+              <span>#QF-2025-8401</span>
+              <span style={{ color: '#FFF', backgroundColor: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px', fontSize: '10px', fontWeight: 700 }}>DELIVERED</span>
+            </div>
+            <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700, marginTop: '6px' }}>Samsung Galaxy S22</div>
+            <div style={{ color: 'var(--text-gray)', fontSize: '12px' }}>Charging Port Repair • Paid ₹878</div>
+            <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: '10px', paddingTop: '8px', fontSize: '11px', color: 'var(--text-gray)' }}>
+              Warranty period completed
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assurance Banner */}
+      <div style={{ backgroundColor: 'var(--bg-card)', borderRadius: '14px', padding: '14px', border: '1px solid var(--border-subtle)', display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Shield size={20} color="var(--primary-red)" />
+        </div>
+        <div>
+          <div style={{ color: '#FFF', fontSize: '13px', fontWeight: 700 }}>30-Day Fixly Warranty Protection</div>
+          <div style={{ color: 'var(--text-gray)', fontSize: '11px', marginTop: '2px' }}>Every repair includes 30 days of hassle-free parts & labor coverage.</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ----------------------------------------------------
+// DASHBOARD SCREEN
+// ----------------------------------------------------
+function DashboardScreen({ onStartNewBooking, onGoToBookings }) {
+  return (
+    <div className="animate-fade-in" style={{ padding: '16px 16px 30px' }}>
+      {/* Profile Card */}
+      <div
+        style={{
+          backgroundColor: 'var(--bg-card)',
+          borderRadius: '18px',
+          padding: '16px',
+          border: '1px solid var(--border-subtle)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '14px',
+          marginBottom: '18px'
+        }}
+      >
+        <div
+          style={{
+            width: '52px',
+            height: '52px',
+            borderRadius: '50%',
+            backgroundColor: 'var(--primary-red)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#FFF',
+            fontWeight: 800,
+            fontSize: '18px',
+            boxShadow: '0 4px 12px var(--primary-red-glow)'
+          }}
+        >
+          AK
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ color: '#FFF', fontSize: '17px', fontWeight: 800 }}>Akshay Kumar</span>
+            <CheckCircle size={15} color="var(--primary-red)" />
+          </div>
+          <div style={{ color: 'var(--text-gray)', fontSize: '13px', marginTop: '2px' }}>+91 98765 43210</div>
+        </div>
+        <div
+          style={{
+            backgroundColor: 'rgba(255,43,66,0.12)',
+            color: 'var(--primary-red)',
+            border: '1px solid rgba(255,43,66,0.3)',
+            borderRadius: '20px',
+            padding: '4px 10px',
+            fontSize: '11px',
+            fontWeight: 800
+          }}
+        >
+          PRO
+        </div>
+      </div>
+
+      {/* Metrics Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' }}>
+        <div style={{ backgroundColor: 'var(--bg-card)', padding: '12px', borderRadius: '14px', border: '1px solid var(--border-subtle)' }}>
+          <Smartphone size={18} color="#FFF" style={{ marginBottom: '8px' }} />
+          <div style={{ color: '#FFF', fontSize: '18px', fontWeight: 800 }}>3 Devices</div>
+          <div style={{ color: '#FFF', fontSize: '12px', fontWeight: 600 }}>Total Repairs</div>
+          <div style={{ color: 'var(--text-gray)', fontSize: '10px' }}>1 Active in lab</div>
+        </div>
+        <div style={{ backgroundColor: 'var(--bg-card)', padding: '12px', borderRadius: '14px', border: '1px solid var(--border-subtle)' }}>
+          <Shield size={18} color="var(--primary-red)" style={{ marginBottom: '8px' }} />
+          <div style={{ color: 'var(--primary-red)', fontSize: '18px', fontWeight: 800 }}>1 Active</div>
+          <div style={{ color: '#FFF', fontSize: '12px', fontWeight: 600 }}>30-Day Warranty</div>
+          <div style={{ color: 'var(--text-gray)', fontSize: '10px' }}>14 Days remaining</div>
+        </div>
+        <div style={{ backgroundColor: 'var(--bg-card)', padding: '12px', borderRadius: '14px', border: '1px solid var(--border-subtle)' }}>
+          <Zap size={18} color="#FFF" style={{ marginBottom: '8px' }} />
+          <div style={{ color: '#FFF', fontSize: '18px', fontWeight: 800 }}>₹1,450</div>
+          <div style={{ color: '#FFF', fontSize: '12px', fontWeight: 600 }}>Total Savings</div>
+          <div style={{ color: 'var(--text-gray)', fontSize: '10px' }}>vs Official Center</div>
+        </div>
+        <div style={{ backgroundColor: 'var(--bg-card)', padding: '12px', borderRadius: '14px', border: '1px solid var(--border-subtle)' }}>
+          <Clock size={18} color="#FFF" style={{ marginBottom: '8px' }} />
+          <div style={{ color: '#FFF', fontSize: '18px', fontWeight: 800 }}>60 Mins</div>
+          <div style={{ color: '#FFF', fontSize: '12px', fontWeight: 600 }}>Avg Turnaround</div>
+          <div style={{ color: 'var(--text-gray)', fontSize: '10px' }}>Express Service</div>
+        </div>
+      </div>
+
+      {/* Warranty Card */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,43,66,0.18) 0%, var(--bg-card) 100%)',
+          borderRadius: '16px',
+          padding: '14px',
+          border: '1px solid rgba(255,43,66,0.3)',
+          marginBottom: '20px'
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: '#FFF', fontSize: '13px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Shield size={16} color="var(--primary-red)" /> Fixly 30-Day Guarantee
+          </span>
+          <span style={{ backgroundColor: 'var(--primary-red)', color: '#FFF', padding: '2px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: 700 }}>
+            14 Days Left
+          </span>
+        </div>
+        <div style={{ color: '#FFF', fontSize: '13px', fontWeight: 600, marginTop: '8px' }}>
+          iPhone 13 128GB — OEM Battery
+        </div>
+        <div style={{ width: '100%', height: '6px', backgroundColor: '#222', borderRadius: '3px', margin: '8px 0', overflow: 'hidden' }}>
+          <div style={{ width: '47%', height: '100%', backgroundColor: 'var(--primary-red)' }} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+          <span style={{ color: 'var(--text-gray)' }}>Coverage: Parts & Labor</span>
+          <span onClick={onGoToBookings} style={{ color: 'var(--primary-red)', fontWeight: 700, cursor: 'pointer' }}>View Details ›</span>
+        </div>
+      </div>
+
+      {/* Device Vault */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+        <span style={{ color: '#FFF', fontSize: '15px', fontWeight: 700 }}>Device Vault</span>
+        <span onClick={onStartNewBooking} style={{ color: 'var(--primary-red)', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '2px' }}>
+          <Plus size={14} /> Add Device
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+        {[
+          { model: 'Xiaomi 11T Pro 5G', status: 'Repair In Progress', active: true },
+          { model: 'iPhone 13 128GB', status: 'Healthy (Warranty Active)', active: false },
+          { model: 'Samsung Galaxy S22', status: 'Healthy', active: false }
+        ].map((d, i) => (
+          <div
+            key={i}
+            style={{
+              backgroundColor: 'var(--bg-card)',
+              borderRadius: '12px',
+              padding: '10px 14px',
+              border: `1px solid ${d.active ? 'rgba(255,43,66,0.4)' : 'var(--border-subtle)'}`,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}
+          >
+            <div style={{ width: '36px', height: '36px', backgroundColor: '#FFF', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Smartphone size={20} color="#111" />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ color: '#FFF', fontSize: '13px', fontWeight: 700 }}>{d.model}</div>
+              <div style={{ color: d.active ? 'var(--primary-red)' : 'var(--text-gray)', fontSize: '11px', fontWeight: 600 }}>{d.status}</div>
+            </div>
+            <ChevronRight size={16} color="var(--text-gray)" />
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Action Tiles */}
+      <div style={{ color: '#FFF', fontSize: '15px', fontWeight: 700, marginBottom: '10px' }}>Quick Actions</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div
+          onClick={onStartNewBooking}
+          style={{ backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '12px 14px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+        >
+          <Calendar size={18} color="#FFF" />
+          <div style={{ flex: 1 }}>
+            <div style={{ color: '#FFF', fontSize: '13px', fontWeight: 600 }}>Schedule Repair Pickup</div>
+            <div style={{ color: 'var(--text-gray)', fontSize: '11px' }}>Flat ₹79 doorstep logistics</div>
+          </div>
+          <ChevronRight size={16} color="var(--text-gray)" />
+        </div>
+
+        <div
+          style={{ backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '12px 14px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+        >
+          <FileText size={18} color="#FFF" />
+          <div style={{ flex: 1 }}>
+            <div style={{ color: '#FFF', fontSize: '13px', fontWeight: 600 }}>GST Invoices & Receipts</div>
+            <div style={{ color: 'var(--text-gray)', fontSize: '11px' }}>Download tax invoices</div>
+          </div>
+          <ChevronRight size={16} color="var(--text-gray)" />
+        </div>
+
+        <div
+          style={{ backgroundColor: 'var(--bg-card)', borderRadius: '12px', padding: '12px 14px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+        >
+          <Headphones size={18} color="#FFF" />
+          <div style={{ flex: 1 }}>
+            <div style={{ color: '#FFF', fontSize: '13px', fontWeight: 600 }}>24/7 Fixly Helpline</div>
+            <div style={{ color: 'var(--text-gray)', fontSize: '11px' }}>Instant WhatsApp & call support</div>
+          </div>
+          <ChevronRight size={16} color="var(--text-gray)" />
+        </div>
+      </div>
     </div>
   );
 }

@@ -318,8 +318,7 @@ class FixlyBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = [
       {'icon': Icons.home_filled, 'label': 'Home'},
-      {'icon': Icons.local_shipping_outlined, 'label': 'Booking'},
-      {'icon': Icons.videocam_outlined, 'label': 'Live'},
+      {'icon': Icons.receipt_long_rounded, 'label': 'Booking'},
       {'icon': Icons.grid_view_rounded, 'label': 'Dashboard'},
     ];
 
@@ -342,21 +341,7 @@ class FixlyBottomNav extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      Icon(items[index]['icon'] as IconData, color: color, size: 24),
-                      if (index == 2) // Live dot
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: AppColors.primaryRed,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                    ],
-                  ),
+                  Icon(items[index]['icon'] as IconData, color: color, size: 24),
                   const SizedBox(height: 4),
                   Text(
                     items[index]['label'] as String,

@@ -165,9 +165,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> {
                         _buildTrustChip(icon: Icons.timer_outlined, label: '60 min repair'),
                         const SizedBox(width: 8),
                         _buildTrustChip(
-                          icon: Icons.circle,
+                          icon: Icons.electric_bolt_rounded,
                           iconColor: AppColors.primaryRed,
-                          label: 'Live stream',
+                          label: 'Doorstep ₹79',
                         ),
                         const SizedBox(width: 8),
                         _buildTrustChip(icon: Icons.shield_outlined, label: '6-month warranty'),
@@ -230,13 +230,9 @@ class _SelectServiceScreenState extends State<SelectServiceScreen> {
                                               color: AppColors.primaryRed,
                                               borderRadius: BorderRadius.circular(4),
                                             ),
-                                            child: const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(Icons.circle, color: Colors.white, size: 5),
-                                                SizedBox(width: 3),
-                                                Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w900)),
-                                              ],
+                                            child: const Text(
+                                              'PRO',
+                                              style: TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w900),
                                             ),
                                           ),
                                           const SizedBox(width: 6),

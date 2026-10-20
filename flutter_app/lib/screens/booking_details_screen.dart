@@ -290,14 +290,7 @@ class BookingDetailsScreen extends StatelessWidget {
                           color: AppColors.primaryRed,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.circle, color: Colors.white, size: 5),
-                            SizedBox(width: 3),
-                            Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900)),
-                          ],
-                        ),
+                        child: const Text('PRO', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900)),
                       ),
                     ],
                   ],
