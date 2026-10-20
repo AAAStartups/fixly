@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: fixly-backend
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://postgres.pxclqsgzeemidllkmqxi:FixlyP%40ssw0rd2026%21@aws-0-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require
+      - key: JWT_SECRET
+        value: fixly_production_secret_key_2026
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
+      - key: DEV_OTP_FALLBACK
+        value: "123456"
+      - key: CORS_ORIGIN
+        value: "*"
