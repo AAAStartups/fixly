@@ -324,8 +324,13 @@ export class OrdersService {
   async getOrderById(orderId: string) {
     if (this.prisma.isConnected) {
       try {
-        const order = await this.prisma.repairOrder.findUnique({
-          where: { id: orderId },
+        const order = await this.prisma.repairOrder.findFirst({
+          where: {
+            OR: [
+              { id: orderId },
+              { orderNumber: { equals: orderId, mode: 'insensitive' } },
+            ],
+          },
           include: {
             model: { include: { brand: true } },
             pickupAddress: true,
