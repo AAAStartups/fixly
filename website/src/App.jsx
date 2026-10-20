@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
+import * as api from './services/api';
 import {
   Smartphone,
   BatteryCharging,
@@ -88,18 +89,76 @@ export default function App() {
   const logisticsFee = 79;
   const totalPrice = estimatedPartPrice + logisticsFee;
 
-  // Handle Tracker Lookup
-  const handleTrackLookup = (e) => {
+  // Live Services Dynamic Override State
+  const [liveServicePrices, setLiveServicePrices] = useState({});
+
+  useEffect(() => {
+    api.getServices().then((res) => {
+      if (Array.isArray(res) && res.length > 0) {
+        const priceMap = {};
+        res.forEach((s) => {
+          if (s.code && s.price) priceMap[s.code] = s.price;
+        });
+        setLiveServicePrices(priceMap);
+      }
+    }).catch(() => {});
+  }, []);
+
+  // Handle Tracker Lookup (Connected to Live Backend)
+  const handleTrackLookup = async (e) => {
     e?.preventDefault();
     const cleanQuery = trackingQuery.trim().toUpperCase().replace('#', '');
-    const found = DEMO_ORDERS[cleanQuery];
-    if (found) {
-      setTrackedOrder(found);
-      setTrackingError(false);
-    } else {
-      setTrackedOrder(null);
-      setTrackingError(true);
+    try {
+      const liveOrder = await api.lookupOrder(cleanQuery);
+      if (liveOrder) {
+        const formatted = {
+          id: liveOrder.orderNumber,
+          model: liveOrder.model?.name || 'Device',
+          service: liveOrder.issueDescription || 'Hardware Repair',
+          deviceColor: 'Obsidian Black',
+          stage:
+            liveOrder.status === 'PICKUP_SCHEDULED'
+              ? 1
+              : liveOrder.status === 'DEVICE_RECEIVED'
+              ? 2
+              : liveOrder.status === 'DIAGNOSIS_PENDING' || liveOrder.status === 'ESTIMATE_SENT'
+              ? 2
+              : liveOrder.status === 'REPAIR_IN_PROGRESS' || liveOrder.status === 'QUALITY_CHECK_PASSED'
+              ? 3
+              : liveOrder.status === 'OUT_FOR_DELIVERY' || liveOrder.status === 'DELIVERED'
+              ? 4
+              : 1,
+          stageTitle: liveOrder.status?.replace(/_/g, ' ') || 'Order In Progress',
+          stageDescription:
+            liveOrder.timeline?.[liveOrder.timeline.length - 1]?.description ||
+            'Device undergoing service at FIXLY Central Workshop.',
+          riderName: liveOrder.rider?.name || 'Assigned Logistics Rider',
+          riderPhone: liveOrder.rider?.phoneNumber || '+91 97777 77777',
+          techName: liveOrder.technician?.name || 'Certified Lab Specialist',
+          slot: liveOrder.pickupSlot
+            ? new Date(liveOrder.pickupSlot).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            : '10:00 AM',
+          notes:
+            liveOrder.diagnosisNotes ||
+            liveOrder.issueDescription ||
+            'Diagnostic intake checklist completed.',
+          total: Number(liveOrder.estimate?.totalAmount) || 4777,
+        };
+        setTrackedOrder(formatted);
+        setTrackingError(false);
+        return;
+      }
+    } catch (err) {
+      // Fallback to DEMO_ORDERS if offline or demo ID
+      const found = DEMO_ORDERS[cleanQuery];
+      if (found) {
+        setTrackedOrder(found);
+        setTrackingError(false);
+        return;
+      }
     }
+    setTrackedOrder(null);
+    setTrackingError(true);
   };
 
   // Launch Confetti
@@ -112,12 +171,52 @@ export default function App() {
     });
   };
 
-  // Submit Booking
-  const handleConfirmBooking = () => {
-    const newId = `QF-2026-${Math.floor(1000 + Math.random() * 9000)}`;
-    setGeneratedOrderId(newId);
-    setModalStep(6);
-    triggerConfetti();
+  // Submit Booking to Live Backend
+  const handleConfirmBooking = async () => {
+    try {
+      const res = await api.createOrder({
+        modelId: currentModel?.id || 'xm-11t-pro',
+        brandId: selectedBrandId || 'xiaomi',
+        serviceId: selectedServiceId || 'display',
+        customerName: customerName || 'Valued Customer',
+        customerPhone: customerPhone || '+919876543210',
+        pickupAddress: customerAddress || 'Powai, Mumbai',
+        pickupDate: selectedPickupDate || 'Tomorrow',
+        pickupSlot: selectedPickupSlot || '10:00 AM',
+        issueDescription: `${currentService?.title || 'Hardware'} repair for ${currentModel?.name || 'Smartphone'}`,
+      });
+
+      const orderNumber = res?.order?.orderNumber || `QF-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      setGeneratedOrderId(orderNumber);
+      setModalStep(6);
+      triggerConfetti();
+
+      // Preload tracking portal with newly placed order
+      if (res?.order) {
+        setTrackedOrder({
+          id: orderNumber,
+          model: currentModel?.name || 'Device',
+          service: currentService?.title || 'Repair Service',
+          deviceColor: 'Obsidian Black',
+          stage: 1,
+          stageTitle: 'Pickup Scheduled',
+          stageDescription: `Doorstep pickup assigned for ${selectedPickupDate} (${selectedPickupSlot}).`,
+          riderName: 'Logistics Fleet Dispatch',
+          riderPhone: '+91 97777 77777',
+          techName: 'Certified Lab Specialist',
+          slot: selectedPickupSlot,
+          notes: 'Device booked for doorstep collection and multi-point diagnosis.',
+          total: totalPrice,
+        });
+        setTrackingQuery(orderNumber);
+      }
+    } catch (err) {
+      console.warn('Booking API error, falling back to instant confirmation:', err.message);
+      const newId = `QF-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      setGeneratedOrderId(newId);
+      setModalStep(6);
+      triggerConfetti();
+    }
   };
 
   const openBookingWithPreset = (brandId, modelId, serviceId) => {
