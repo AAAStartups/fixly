@@ -7,6 +7,9 @@ import {
   CreateEstimateDto,
   UpdateOrderStatusDto,
   ManageSparePartDto,
+  UpdatePricingServiceDto,
+  UpdateCustomerDto,
+  UpdateOrderDetailsDto,
 } from './dto/admin.dto';
 
 @Controller('admin')
@@ -52,6 +55,29 @@ export class AdminController {
     return this.adminService.updateOrderStatus(orderId, dto);
   }
 
+  @Patch('orders/:id/customer')
+  async updateOrderCustomer(@Param('id') orderId: string, @Body() dto: UpdateCustomerDto) {
+    return this.adminService.updateOrderCustomer(orderId, dto);
+  }
+
+  @Patch('orders/:id/details')
+  async updateOrderDetails(@Param('id') orderId: string, @Body() dto: UpdateOrderDetailsDto) {
+    return this.adminService.updateOrderDetails(orderId, dto);
+  }
+
+  @Get('pricing/services')
+  async getPricingServices() {
+    return this.adminService.getPricingServices();
+  }
+
+  @Patch('pricing/services/:code')
+  async updatePricingService(
+    @Param('code') code: string,
+    @Body() dto: UpdatePricingServiceDto,
+  ) {
+    return this.adminService.updatePricingService(code, dto);
+  }
+
   @Get('inventory/parts')
   async getPartsInventory() {
     return this.adminService.getPartsInventory();
@@ -60,5 +86,20 @@ export class AdminController {
   @Post('inventory/parts')
   async upsertSparePart(@Body() dto: ManageSparePartDto) {
     return this.adminService.upsertSparePart(dto);
+  }
+
+  @Get('staff')
+  async getStaff() {
+    return this.adminService.getStaff();
+  }
+
+  @Get('customers')
+  async getCustomers() {
+    return this.adminService.getCustomers();
+  }
+
+  @Patch('customers/:id')
+  async updateCustomer(@Param('id') customerId: string, @Body() dto: UpdateCustomerDto) {
+    return this.adminService.updateCustomer(customerId, dto);
   }
 }

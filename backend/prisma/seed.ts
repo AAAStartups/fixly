@@ -259,6 +259,79 @@ async function main() {
   }
   console.log(`✅ Seeded ${partsData.length} Spare Parts.`);
 
+  // 4b. Seed Repair Service Catalog (Default Pricing)
+  const servicesCatalogData = [
+    {
+      code: 'display',
+      title: 'Display Screen Replacement',
+      subtitle: 'OEM Grade OLED / AMOLED screen replacement with frame',
+      basePrice: 4299.00,
+      warrantyText: '6 Months Full Touch & Panel Warranty',
+      isLiveStreamSupported: true,
+      icon: 'smartphone',
+      sortOrder: 1,
+    },
+    {
+      code: 'battery',
+      title: 'Battery Replacement',
+      subtitle: 'OEM High-Density Li-ion battery with 100% health calibration',
+      basePrice: 2249.00,
+      warrantyText: '6 Months Warranty (Zero Degrade Guarantee)',
+      isLiveStreamSupported: true,
+      icon: 'battery-charging',
+      sortOrder: 2,
+    },
+    {
+      code: 'charging-port',
+      title: 'Charging Port & Flex Cable',
+      subtitle: 'Sub-board micro-soldering and Type-C port replacement',
+      basePrice: 1299.00,
+      warrantyText: '6 Months Fast-Charging Warranty',
+      isLiveStreamSupported: true,
+      icon: 'zap',
+      sortOrder: 3,
+    },
+    {
+      code: 'camera',
+      title: 'Camera Module Assembly',
+      subtitle: 'Original OIS sensor & glass lens replacement',
+      basePrice: 2999.00,
+      warrantyText: '6 Months Optical Clarity Warranty',
+      isLiveStreamSupported: true,
+      icon: 'camera',
+      sortOrder: 4,
+    },
+    {
+      code: 'speaker',
+      title: 'Earpiece & Loudspeaker Module',
+      subtitle: 'Distortion-free acoustic driver & mesh replacement',
+      basePrice: 1499.00,
+      warrantyText: '6 Months Acoustic Warranty',
+      isLiveStreamSupported: true,
+      icon: 'volume-2',
+      sortOrder: 5,
+    },
+    {
+      code: 'water-damage',
+      title: 'Water Damage Ultrasonic Diagnostics',
+      subtitle: 'Ultrasonic chemical bath, mother-board corrosion removal & drying',
+      basePrice: 1999.00,
+      warrantyText: '6 Months Circuit Stability Warranty',
+      isLiveStreamSupported: true,
+      icon: 'droplets',
+      sortOrder: 6,
+    },
+  ];
+
+  for (const s of servicesCatalogData) {
+    await prisma.repairServiceCatalog.upsert({
+      where: { code: s.code },
+      update: s,
+      create: s,
+    });
+  }
+  console.log(`✅ Seeded ${servicesCatalogData.length} Repair Services into Catalog.`);
+
   // 5. Seed Users (Customer, Admin, Technician, Rider)
   const customerUser = await prisma.user.upsert({
     where: { phoneNumber: '+919876543210' },

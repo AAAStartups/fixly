@@ -88,3 +88,76 @@ export class ManageSparePartDto {
   @IsNumber()
   minThreshold?: number;
 }
+
+export class UpdatePricingServiceDto {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  subtitle?: string;
+
+  @IsOptional()
+  @IsNumber()
+  basePrice?: number;
+
+  @IsOptional()
+  @IsString()
+  warrantyText?: string;
+
+  @IsOptional()
+  isLiveStreamSupported?: boolean;
+
+  @IsOptional()
+  @IsString()
+  icon?: string;
+}
+
+export class UpdateCustomerDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  phoneNumber?: string;
+
+  @IsOptional()
+  @IsString()
+  addressLine?: string;
+
+  @IsOptional()
+  @IsString()
+  landmark?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  pincode?: string;
+}
+
+export class UpdateOrderDetailsDto {
+  @IsOptional()
+  @IsString()
+  issueDescription?: string;
+
+  @IsOptional()
+  @IsString()
+  diagnosisNotes?: string;
+
+  @IsOptional()
+  @IsNumber()
+  pickupFee?: number;
+
+  @IsOptional()
+  pickupSlot?: string | Date;
+}
+

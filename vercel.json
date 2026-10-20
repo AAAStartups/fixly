@@ -8,6 +8,10 @@
     "web": {
       "root": "web",
       "framework": "vite"
+    },
+    "admin": {
+      "root": "admin",
+      "framework": "vite"
     }
   },
   "rewrites": [

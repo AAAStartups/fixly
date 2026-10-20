@@ -8,8 +8,11 @@ import {
   CreateEstimateDto,
   UpdateOrderStatusDto,
   ManageSparePartDto,
+  UpdatePricingServiceDto,
+  UpdateCustomerDto,
+  UpdateOrderDetailsDto,
 } from './dto/admin.dto';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, UserRole } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
@@ -373,5 +376,208 @@ export class AdminService {
     }
 
     return { success: true, part: dto };
+  }
+
+  async updateOrderCustomer(orderId: string, dto: UpdateCustomerDto) {
+    if (this.prisma.isConnected) {
+      try {
+        const order = await this.prisma.repairOrder.findUnique({
+          where: { id: orderId },
+          include: { customer: true, pickupAddress: true },
+        });
+        if (!order) throw new NotFoundException('Order not found');
+
+        if (dto.name || dto.email || dto.phoneNumber) {
+          await this.prisma.user.update({
+            where: { id: order.customerId },
+            data: {
+              ...(dto.name && { name: dto.name }),
+              ...(dto.email && { email: dto.email }),
+              ...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
+            },
+          });
+        }
+
+        if (order.addressId && (dto.addressLine || dto.landmark !== undefined || dto.city || dto.pincode)) {
+          await this.prisma.address.update({
+            where: { id: order.addressId },
+            data: {
+              ...(dto.addressLine && { addressLine: dto.addressLine }),
+              ...(dto.landmark !== undefined && { landmark: dto.landmark }),
+              ...(dto.city && { city: dto.city }),
+              ...(dto.pincode && { pincode: dto.pincode }),
+            },
+          });
+        }
+
+        return { success: true, message: 'Customer details updated successfully' };
+      } catch (err) {
+        this.logger.error('Failed to update customer:', err.message);
+        throw err;
+      }
+    }
+    return { success: true, message: 'Customer updated (offline fallback)' };
+  }
+
+  async updateOrderDetails(orderId: string, dto: UpdateOrderDetailsDto) {
+    if (this.prisma.isConnected) {
+      try {
+        const updated = await this.prisma.repairOrder.update({
+          where: { id: orderId },
+          data: {
+            ...(dto.issueDescription && { issueDescription: dto.issueDescription }),
+            ...(dto.diagnosisNotes !== undefined && { diagnosisNotes: dto.diagnosisNotes }),
+            ...(dto.pickupFee !== undefined && { pickupFee: dto.pickupFee }),
+            ...(dto.pickupSlot && { pickupSlot: new Date(dto.pickupSlot) }),
+          },
+        });
+        return { success: true, order: updated };
+      } catch (err) {
+        this.logger.error('Failed to update order details:', err.message);
+        throw err;
+      }
+    }
+    return { success: true, message: 'Order details updated (offline fallback)' };
+  }
+
+  async getPricingServices() {
+    if (this.prisma.isConnected) {
+      try {
+        const services = await this.prisma.repairServiceCatalog.findMany({
+          orderBy: { sortOrder: 'asc' },
+        });
+        return services.map((s) => ({
+          id: s.id,
+          code: s.code,
+          title: s.title,
+          subtitle: s.subtitle,
+          basePrice: Number(s.basePrice),
+          warrantyText: s.warrantyText,
+          isLiveStreamSupported: s.isLiveStreamSupported,
+          icon: s.icon,
+          sortOrder: s.sortOrder,
+        }));
+      } catch (err) {
+        this.logger.error('Failed to fetch pricing services:', err.message);
+      }
+    }
+    return [];
+  }
+
+  async updatePricingService(code: string, dto: UpdatePricingServiceDto) {
+    if (this.prisma.isConnected) {
+      try {
+        const updated = await this.prisma.repairServiceCatalog.update({
+          where: { code },
+          data: {
+            ...(dto.title && { title: dto.title }),
+            ...(dto.subtitle && { subtitle: dto.subtitle }),
+            ...(dto.basePrice !== undefined && { basePrice: dto.basePrice }),
+            ...(dto.warrantyText && { warrantyText: dto.warrantyText }),
+            ...(dto.isLiveStreamSupported !== undefined && { isLiveStreamSupported: dto.isLiveStreamSupported }),
+            ...(dto.icon && { icon: dto.icon }),
+          },
+        });
+        return {
+          success: true,
+          service: {
+            ...updated,
+            basePrice: Number(updated.basePrice),
+          },
+        };
+      } catch (err) {
+        this.logger.error('Failed to update pricing service:', err.message);
+        throw err;
+      }
+    }
+    return { success: true, message: 'Service price updated (offline fallback)' };
+  }
+
+  async getStaff() {
+    if (this.prisma.isConnected) {
+      try {
+        const staff = await this.prisma.user.findMany({
+          where: {
+            role: { in: [UserRole.TECHNICIAN, UserRole.RIDER] },
+          },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phoneNumber: true,
+            role: true,
+            createdAt: true,
+          },
+          orderBy: { name: 'asc' },
+        });
+        return staff;
+      } catch (err) {
+        this.logger.error('Failed to get staff:', err.message);
+      }
+    }
+    return [
+      { id: 'tech-1', name: 'Vikram Sharma (Level 3 Tech)', role: 'TECHNICIAN', phoneNumber: '+919888888888' },
+      { id: 'rider-1', name: 'Amit Verma (Express Logistics)', role: 'RIDER', phoneNumber: '+919777777777' },
+    ];
+  }
+
+  async getCustomers() {
+    if (this.prisma.isConnected) {
+      try {
+        const customers = await this.prisma.user.findMany({
+          where: { role: UserRole.CUSTOMER },
+          include: {
+            addresses: true,
+            customerOrders: {
+              select: {
+                id: true,
+                orderNumber: true,
+                status: true,
+                createdAt: true,
+              },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        });
+        return customers;
+      } catch (err) {
+        this.logger.error('Failed to get customers:', err.message);
+      }
+    }
+    return [];
+  }
+
+  async updateCustomer(customerId: string, dto: UpdateCustomerDto) {
+    if (this.prisma.isConnected) {
+      try {
+        const updated = await this.prisma.user.update({
+          where: { id: customerId },
+          data: {
+            ...(dto.name && { name: dto.name }),
+            ...(dto.email && { email: dto.email }),
+            ...(dto.phoneNumber && { phoneNumber: dto.phoneNumber }),
+          },
+          include: { addresses: true },
+        });
+
+        if (dto.addressLine && updated.addresses.length > 0) {
+          await this.prisma.address.update({
+            where: { id: updated.addresses[0].id },
+            data: {
+              addressLine: dto.addressLine,
+              ...(dto.landmark !== undefined && { landmark: dto.landmark }),
+              ...(dto.city && { city: dto.city }),
+              ...(dto.pincode && { pincode: dto.pincode }),
+            },
+          });
+        }
+
+        return { success: true, customer: updated };
+      } catch (err) {
+        this.logger.error('Failed to update customer:', err.message);
+        throw err;
+      }
+    }
+    return { success: true, message: 'Customer updated (offline fallback)' };
   }
 }
